@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Process_Software.Models.Work>
+@{
+    List<SelectListItem> StatusDropdownList = ViewBag.StatusDropdownList;
+    List<SelectListItem> UserProviserDropdownList = ViewBag.UserProviserDropdownList;
+    var UserList = ViewBag.UserList;
+    int count = Model.Count() + 1;
+    string? historyText = ViewBag.HistoryText;
+    int? historyID = ViewBag.HistoryID;
+
+}
+@foreach (var work in Model)
+{
+    <tr class="table table-light">
+
+        <td>
+            @Html.ValueFor(m => work.CreateDate, "{0:dd/MM/yyyy}")
+        </td>
+        <td>
+            @Html.DisplayFor(m => work.Project)
+        </td>
+        <td>
+            @Html.DisplayFor(m => work.Name)
+        </td>
+        <td>
+            @Html.ValueFor(model => work.DueDate, "{0:dd/MM/yyyy}")
+
+        </td>
+        <td>
+            @foreach (var i in work.Provider.Where(s => s.User.ID == work.CreateBy))
+            {
+                @Html.DisplayFor(m => i.User.Name)
+            }
+        </td>
+
+
+        <td>
+            @foreach (var i in work.Provider)
+            {
+                if (i.IsDelete != true)
+                {
+                    if (i == work.Provider.Last())
+                    {
+                        @Html.DisplayFor(m => i.User.Name)
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(m => i.User.Name)
+                        @Html.DisplayName(" , ")
+                    }
+                }
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(m => work.Status.StatusName)
+        </td>
+        <td>
+            @Html.DisplayFor(m => work.Remark)
+
+        </td>
+        <td>
+            <div class="col d-flex justify-content-center align-items-center">
+                <div class="p-3">
+                    @Html.ActionLink("History", "History", new { id = work.ID }, new { @class = "btn btn-warning" })
+                </div>
+                <div>
+                    @Html.ActionLink("Edit", "Edit", new { id = work.ID }, new { @class = "btn btn-warning" })
+
+                </div>
+            </div>
+
+        </td>
+        <td>
+
+            <table class="table table-active table-primary" style="max-width:450px">
+                <tr>
+                    <td>
+                        
+                        @if (work.ID == ViewBag.HistoryID)
+                        {
+                            if (historyText != null)
+                            {
+                                @Html.DisplayName(historyText)
+                            }
+                            else
+                            {
+                                if (work.ID == historyID)
+                                {
+                                    @Html.DisplayFor(m => work.WorkLog)
+                                }
+                            }
+                        }
+                    </td>
+                </tr>
+            </table>
+
+
+        </td>
+    </tr>
+
+
+}
+
+<style>
+    .pre-line {
+        white-space: pre-line;
+    }
+</style>

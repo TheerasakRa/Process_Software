@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Process_Software.Models.Work>
+
+@using (Html.BeginForm("Edit", "Work", FormMethod.Post, new { id = "manage", name = "manage", enctype = "multipart/form-data" }))
+{
+    <table class="table table-striped table-primary" style="max-width:3000px">
+        <thead>
+            <tr>
+                <th scope="col" style="max-width:150px;">
+                    @Html.DisplayNameFor(model => model.CreateDate)
+                </th>
+                <th scope="col" class="text-center" style="max-width:150px;">
+                    @Html.DisplayNameFor(model => model.Project)
+                </th>
+                <th scope="col" class="text-center" style="max-width:150px;">
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th scope="col" class="text-center" style="max-width:150px;">
+                    @Html.DisplayNameFor(model => model.DueDate)
+                </th>
+                <th scope="col" class="text-center" style="max-width:150px;">
+                    @Html.DisplayName("Assign By/ Requester")
+                </th>
+                <th scope="col" class="text-center" style="max-width:150px;">
+                    @Html.DisplayName("Assign To/ Provider")
+                </th>
+                <th class="text-center" style="max-width:150px;">
+                    @Html.DisplayName("Status")
+                </th>
+                <th class="text-center" style="max-width:150px;">
+                    @Html.DisplayNameFor(model => model.Remark)
+                </th>
+
+                <th class="text-center" style="max-width:90px;">
+                    @Html.DisplayName("Manage")
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                @Html.DisplayFor(m => m, "HistoryTemp")
+            </tr>
+        </tbody>
+    </table>
+}

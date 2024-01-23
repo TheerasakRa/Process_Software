@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Process_Software.Models.Work>
+
+<h1>รายการงาน</h1>
+@{
+    var StatusValueList = ViewBag.StatusValue;  
+}
+<table class="table table-primary text-center">
+    <thead>
+        <tr>
+            <th scope="col" class="text-center">
+                @Html.DisplayNameFor(model => model.CreateDate)
+            </th>
+            <th scope="col" class="text-center">
+                @Html.DisplayNameFor(model => model.Project)
+            </th>
+            <th scope="col" class="text-center">
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+
+            <th scope="col" class="text-center">
+                @Html.DisplayNameFor(model => model.DueDate)
+            </th>
+            <th scope="col" class="text-center">
+                @Html.DisplayName("Assign By/ Requester")
+            </th>
+            <th scope="col" class="text-center">
+                @Html.DisplayName("Assign To/ Provider")
+            </th>
+            <th>
+                @Html.DisplayName("Status")
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Remark)
+            </th>
+            <th>
+                @Html.DisplayName("Manage")
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var i in Model)
+        {
+            @Html.DisplayFor(m => i,"","Work")
+
+        }
+    </tbody>
+    
+</table>
+
+    <div class="col-md-2">
+        @Html.ActionLink("Create", "Manage", new {}, new { @class = "btn btn-secondary" })
+    </div>
+
+    
+

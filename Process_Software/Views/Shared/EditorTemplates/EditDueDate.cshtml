@@ -1,0 +1,36 @@
+﻿@model Process_Software.Models.Work
+@{
+    List<SelectListItem> StatusDropdownList = ViewBag.StatusDropdownList;
+    List<SelectListItem> UserProviserDropdownList = ViewBag.UserProviserDropdownList;
+    var oneDayInMillis = 24 * 60 * 60 * 1000;
+    var createdate = Model.CreateDate;
+    var currentDate = DateTime.Now;
+
+    bool enforceDueDate = false;
+    if (Model.DueDate == null && createdate.HasValue)
+    {
+        var timeDifferenceInMillis = (currentDate - createdate.Value).TotalMilliseconds;
+        enforceDueDate = timeDifferenceInMillis > oneDayInMillis;
+    }
+}
+@using (Html.BeginForm("Edit", "Work", FormMethod.Post, new { id = "manage", name = "manage", enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.CreateDate)
+    @Html.HiddenFor(m => m.CreateBy)
+    @Html.HiddenFor(m => m.Project)
+    @Html.HiddenFor(m => m.Name)
+    @Html.HiddenFor(m => m.Provider)
+    @Html.HiddenFor(m => m.Status)
+    @Html.HiddenFor(m => m.Remark)
+    @Html.HiddenFor(m => m.UpdateDate)
+
+    <td>
+        @if (enforceDueDate)
+        {
+            @Html.EditorFor(m => m.DueDate)
+            <input type="submit" value="submit" class="btn btn-outline-success" />
+            <span style="color: red;">  Due Date is required</span>
+        }
+    </td>
+}

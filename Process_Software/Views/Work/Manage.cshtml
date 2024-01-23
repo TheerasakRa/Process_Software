@@ -1,0 +1,103 @@
+﻿@model IEnumerable<Process_Software.Models.Work>
+
+@using (Html.BeginForm("Manage", "Work", FormMethod.Post, new { id = "myform", name = "myform", enctype = "multipart/form-data" }))
+{
+    <table class="table table-primary" style="max-width:1200px">
+        <thead>
+            <tr>
+                <th scope="col" style="max-width:50px;">
+                    @Html.DisplayNameFor(model => model.CreateDate)
+                </th>
+                <th scope="col" class="text-center" style="max-width:150px;">
+                    @Html.DisplayNameFor(model => model.Project)
+                </th>
+                <th scope="col" class="text-center" style="max-width:150px;">
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th scope="col" class="text-center" style="max-width:150px;">
+                    @Html.DisplayNameFor(model => model.DueDate)
+                </th>
+                <th scope="col" class="text-center" style="max-width:150px;">
+                    @Html.DisplayName("Assign By/ Requester")
+                </th>
+                <th scope="col" class="text-center" style="max-width:150px;">
+                    @Html.DisplayName("Assign To/ Provider")
+                </th>
+                <th class="text-center" style="max-width:150px;">
+                    @Html.DisplayName("Status")
+                </th>
+                <th class="text-center" style="max-width:150px;">
+                    @Html.DisplayNameFor(model => model.Remark)
+                </th>
+
+                <th class="text-center" style="max-width:90px;">
+                    @Html.DisplayName("Manage")
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr >
+            @foreach (var work in Model)
+            {
+                if (work == Model.Last())
+                {
+                    @Html.EditorFor(m => work)
+                }
+                else
+                {
+                    @Html.DisplayFor(m => work)
+                }
+            }
+            
+            </tr>
+        </tbody>
+    </table>
+}
+<script>
+    ﻿document.addEventListener("DOMContentLoaded",
+    () => {
+
+        $('#select-tops-options').multiselect({
+            buttonClass: 'form-select',
+            nonSelectedText: 'Select User',
+            buttonContainer: '<div class="btn-danger" id="select-tops-options-container"></div>',
+            selectedClass: 'active multiselect-selected',
+            numberDisplayed: 5,
+            buttonWidth: '12em',
+            includeSelectAllOption: true,
+            onSelectAll: function (options) {
+                document.getElementById("work_IsSelectAllItem").value = true;
+            },
+            onDeselectAll: function (options) {
+                document.getElementById("work_IsSelectAllItem").value = false;
+            },
+            onChange: function (option, checked) {
+                document.getElementById("work_IsSelectAllItem").value = false;
+
+                if (checked) {
+                    document.querySelectorAll(`[value="${$(option[0])[0].value}"]`)[1].ariaChecked = "true";
+                    document.querySelectorAll(`[value="${$(option[0])[0].value}"]`)[0].ariaChecked = "true";
+                } else {
+                    document.querySelectorAll(`[value="${$(option[0])[0].value}"]`)[1].ariaChecked = "false";
+                    document.querySelectorAll(`[value="${$(option[0])[0].value}"]`)[0].ariaChecked = "false";
+                }
+                var toppings = $('#select-tops-options option:selected');
+
+                var selected = [];
+                $(toppings).each(function (index, item) {
+                    selected.push([$(this).val()]);
+                });
+
+                document.getElementById("work_ProvidersID").value = selected.join(',');
+            },
+            templates: {
+                button:
+                    '<button type="button" class="multiselect dropdown-toggle" ' +
+                    'data-bs-toggle="dropdown"><span class="multiselect-selected-text"></span></button>',
+                resetButton: '<div class="multiselect-reset text-center p-2"><button type="button" class="btn btn-sm btn-danger"></button></div>'
+            }
+        });
+
+    });
+</script>

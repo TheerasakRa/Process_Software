@@ -1,0 +1,107 @@
+﻿@model Process_Software.Models.Work
+@{
+    List<SelectListItem> StatusDropdownList = ViewBag.StatusDropdownList;
+    List<SelectListItem> UserProviserDropdownList = ViewBag.UserProviserDropdownList;
+    var oneDayInMillis = 24 * 60 * 60 * 1000;
+    var createdate = Model.CreateDate;
+    var currentDate = DateTime.Now;
+
+    bool enforceDueDate = false;
+    if (Model.DueDate == null && createdate.HasValue)
+    {
+        var timeDifferenceInMillis = (currentDate - createdate.Value).TotalMilliseconds;
+        enforceDueDate = timeDifferenceInMillis > oneDayInMillis;
+    }
+}
+
+
+@if (Model.ID != 0)
+{
+    <tr class="text-center @(Model.DueDate == null && enforceDueDate ? "table-danger" : "table-light")">
+        <td>
+            @Html.ValueFor(model => model.CreateDate, "{0:dd/MM/yyyy}")
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.Project)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.Name)
+        </td>
+
+        @if (Model.DueDate == null && enforceDueDate)
+        {
+            @using (Html.BeginForm("Edit", "Work", FormMethod.Post, new { id = "manage", name = "manage", enctype = "multipart/form-data" }))
+            {
+                <td>
+                    @if (enforceDueDate)
+                    {
+                        @Html.HiddenFor(m => m.ID)
+                        @Html.HiddenFor(m => m.HeaderID)
+                        @Html.HiddenFor(m => m.StatusID)
+                        @Html.HiddenFor(m => m.ProvidersID)
+                        @Html.HiddenFor(m => m.CreateDate)
+                        @Html.HiddenFor(m => m.CreateBy)
+                        @Html.HiddenFor(m => m.Project)
+                        @Html.HiddenFor(m => m.Name)
+                        @Html.HiddenFor(m => m.Provider)
+                        @Html.HiddenFor(m => m.Status)
+                        @Html.HiddenFor(m => m.Remark)
+                        @Html.HiddenFor(m => m.UpdateDate)
+                        @Html.EditorFor(m => m.DueDate)
+                        <input type="submit" value="submit" class="btn btn-outline-success" />
+                        <br />
+                        <span style="color: red;">  Due Date is required</span>
+                    }
+                </td>
+            }
+        }
+        else
+        {
+            <td>
+                @Html.DisplayFor(m => m.DueDate, "{0:dd/MM/yyyy}")
+            </td>
+        }
+        <td>
+            @foreach (var i in Model.Provider.Where(s => s.User.ID == Model.CreateBy))
+            {
+                @Html.DisplayFor(m => i.User.Name)
+            }
+        </td>
+        <td>
+            @foreach (var i in Model.Provider)
+            {
+                if (i.IsDelete != true)
+                {
+                    if (i == Model.Provider.Last())
+                    {
+                        @Html.DisplayFor(m => i.User.Name)
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(m => i.User.Name)
+                        @Html.DisplayName(" , ")
+                    }
+                }
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.Status.StatusName)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.Remark)
+        </td>
+        <td>
+            <div class="col d-flex justify-content-center align-items-center">
+                <div class="p-3">
+                    @Html.ActionLink("History", "History", new { id = Model.ID }, new { @class = "btn btn-warning" })
+                </div>
+                <div>
+                    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-warning" })
+                </div>
+            </div>
+        </td>
+        <td>
+        </td>
+    </tr>
+       
+}

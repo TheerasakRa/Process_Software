@@ -1,0 +1,65 @@
+﻿@model Process_Software.Models.Work
+@{
+    List<SelectListItem> StatusDropdownList = ViewBag.StatusDropdownList;
+    List<SelectListItem> UserProviserDropdownList = ViewBag.UserProviserDropdownList;
+}
+@Html.HiddenFor(m => m.ProvidersID)
+@Html.HiddenFor(m => m.IsSelectAllItem)
+@Html.HiddenFor(m => m.ID)
+@Html.HiddenFor(m => m.HeaderID)
+
+<div>
+    @Html.EditorFor(m => m.Provider)
+</div>
+
+<tr class="text-center table-success ">
+
+    <td>
+        @Html.ValueFor(model => model.CreateDate, "{0:dd/MM/yyyy}")
+    </td>
+    <td>
+        @Html.EditorFor(m => m.Project)
+    </td>
+    <td>
+        @Html.EditorFor(m => m.Name)
+    </td>
+    <td>
+        @Html.EditorFor(m => m.DueDate, "{0:dd/MM/yyyy}")
+    </td>
+    <td>
+        @if (Model.CreateBy != null)
+        {
+            foreach (var item in UserProviserDropdownList)
+            {
+                if (item.Value == "1005")
+                {
+                    @Html.DisplayFor(m => item.Text)
+                }
+            }
+        }
+    </td>
+    <td>
+        <select id="select-tops-options" asp-items="UserProviserDropdownList" class="require" multiple></select>
+    </td>
+    <td>
+        @if (Model.ID == ViewBag.WorkIDs)
+        {
+            @Html.DropDownListFor(m => m.StatusID, StatusDropdownList, new { @class = "form-control-sm" })
+        }
+        else
+        {
+            @Html.DropDownListFor(m => m.StatusID, StatusDropdownList, new { @class = "form-control-sm", @disabled = "disabled" })
+
+        }
+    </td>
+    <td>
+        @Html.EditorFor(m => m.Remark)
+
+    </td>
+    <td>
+        <input type="submit" value="submit" class="btn btn-outline-success" />
+    </td>
+    <div class="d-flex justify-content-end align-content-center ">
+        @Html.ActionLink("Close", "Index", new { }, new { @class = "btn btn-secondary" })
+    </div>
+    <br />
