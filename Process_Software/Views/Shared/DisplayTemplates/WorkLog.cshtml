@@ -1,84 +1,117 @@
 ﻿@model WorkLog
-<br />
+@{
+    var UpdateBy = ViewBag.UpdateBy;
+}
 @if (Model.nextWorklog != null)
 {
-    <div>
-        @Html.DisplayFor(m => m.No)
-        @if (Model.Project != Model.nextWorklog.Project)
-        {
-            @Html.DisplayName("Project: ")
-            @Html.DisplayFor(m => m.Project)
-            @Html.DisplayName(" -> ")
-            @Html.DisplayFor(m => m.nextWorklog.Project)
-            <br />
-        }
-        @if (Model.Name != Model.nextWorklog.Name)
-        {
-            @Html.DisplayName("Name: ")
-            @Html.DisplayFor(m => m.Name)
-            @Html.DisplayName(" -> ")
-            @Html.DisplayFor(m => m.nextWorklog.Name)
-            <br />
-        }
-        @if (Model.DueDate != Model.nextWorklog.DueDate)
-        {
-            @Html.DisplayName("DueDate: ")
-            @Html.ValueFor(model => model.CreateDate, "{0:dd/MM/yyyy}")
-            @Html.DisplayName(" -> ")
-            @Html.ValueFor(m => m.nextWorklog.DueDate, "{0:dd/MM/yyyy}")
-            <br />
-        }
-        @if (Model.StatusID != Model.nextWorklog.StatusID)
-        {
-            @Html.DisplayName("Status: ")
-            @Html.DisplayFor(m => m.Status.StatusName)
-            @Html.DisplayName(" -> ")
-            @Html.DisplayFor(m => m.nextWorklog.Status.StatusName)
-            <br />
-        }
-        @{
-            @if (Model.ProviderLog.Where(s => s.IsDelete == false).Count()!= Model.nextWorklog.ProviderLog.Where(s => s.IsDelete == false).Count())
-            {
-                @Html.DisplayName("Provider: ")
-                string oldUser = "";
-                string newUser = "";
-                foreach (var i in Model.ProviderLog.Where(s => s.IsDelete == false))
+    <tbody class="table-secondary">
+        <tr>
+            <td>@Html.DisplayFor(m => m.No)</td>
+            <td>
+                @if (Model.WorkID == ViewBag.ID)
                 {
-                    if (i == Model.ProviderLog.Last())
-                    {
-                        oldUser += i.User.Name;
-                    }
-                    else
-                    {
-                        oldUser += i.User.Name + ",";
-                    }
+                    @Html.DisplayFor(m => m.LogContent)
                 }
-                foreach (var i in Model.nextWorklog.ProviderLog.Where(s => s.IsDelete == false))
+                <br />
+                @if (Model.UpdateDate != Model.nextWorklog.UpdateDate)
                 {
-                    if (i == Model.nextWorklog.ProviderLog.Last())
-                    {
-                        newUser += i.User.Name;
-                    }
-                    else
-                    {
-                        newUser += i.User.Name + ",";
-                    }
+                    @Html.DisplayName("Update Date: ")
+                    @Html.ValueFor(m => m.nextWorklog.UpdateDate)
                 }
-                @Html.DisplayName(oldUser + " -> " + newUser)
 
                 <br />
-            }
-        }
-        @if (Model.Remark != Model.nextWorklog.Remark)
-        {
-            @Html.DisplayName("Remark: ")
-            @Html.DisplayFor(m => m.Remark)
-            @Html.DisplayName(" -> ")
-            @Html.DisplayFor(m => m.nextWorklog.Remark)
+                @if (Model.Project != Model.nextWorklog.Project)
+                {
+                    @Html.DisplayName("Project: ")
+                    @Html.DisplayFor(m => m.Project)
+                    @Html.DisplayName(" -> ")
+                    @Html.DisplayFor(m => m.nextWorklog.Project)
+                    <br />
+                }
+                @if (Model.Name != Model.nextWorklog.Name)
+                {
+                    @Html.DisplayName("Name: ")
+                    @Html.DisplayFor(m => m.Name)
+                    @Html.DisplayName(" -> ")
+                    @Html.DisplayFor(m => m.nextWorklog.Name)
+                    <br />
+                }
+                @if (Model.DueDate != Model.nextWorklog.DueDate)
+                {
+                    @Html.DisplayName("Due Date: ")
+                    if (Model.DueDate == null)
+                    {
+                        @Html.DisplayName("Indefinable ")
+                    }
+                    else
+                    {
+                        @Html.ValueFor(model => model.CreateDate, "{0:dd/MM/yyyy}")
 
-            <br />
+                    }
+                    @Html.DisplayName(" -> ")
+                    if (Model.nextWorklog.DueDate == null)
+                    {
+                        @Html.DisplayName("Indefinable ")
+                    }
+                    else
+                    {
+                        @Html.ValueFor(m => m.nextWorklog.DueDate, "{0:dd/MM/yyyy}")
+                    }
+                    <br />
+                }
+                @if (Model.StatusID != Model.nextWorklog.StatusID)
+                {
+                    @Html.DisplayName("Status: ")
+                    @Html.DisplayFor(m => m.Status.StatusName)
+                    @Html.DisplayName(" -> ")
+                    @Html.DisplayFor(m => m.nextWorklog.Status.StatusName)
+                    <br />
+                }
 
-        }
-    </div>
 
+                @{
+                    @if (Model.ProviderLog.Where(s => s.IsDelete == false).Count() != Model.nextWorklog.ProviderLog.Where(s => s.IsDelete == false).Count())
+                    {
+                        @Html.DisplayName("Provider: ")
+                        string oldUser = "";
+                        string newUser = "";
+                        foreach (var i in Model.ProviderLog.Where(s => s.IsDelete == false))
+                        {
+                            if (i == Model.ProviderLog.Last())
+                            {
+                                oldUser += i.User.Name;
+                            }
+                            else
+                            {
+                                oldUser += i.User.Name + ",";
+                            }
+                        }
+                        foreach (var i in Model.nextWorklog.ProviderLog.Where(s => s.IsDelete == false))
+                        {
+                            if (i == Model.nextWorklog.ProviderLog.Last())
+                            {
+                                newUser += i.User.Name;
+                            }
+                            else
+                            {
+                                newUser += i.User.Name + ",";
+                            }
+                        }
+                        @Html.DisplayName(oldUser + " -> " + newUser)
+
+                        <br />
+                    }
+                }
+                @if (Model.Remark != Model.nextWorklog.Remark)
+                {
+                    @Html.DisplayName("Remark: ")
+                    @Html.DisplayFor(m => m.Remark)
+                    @Html.DisplayName(" -> ")
+                    @Html.DisplayFor(m => m.nextWorklog.Remark)
+
+                    <br />
+                }
+            </td>
+        </tr>
+    </tbody>
 }

@@ -18,9 +18,7 @@ namespace Process_Software.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-07MEU62\SQLEXPRESS;Initial Catalog=Process_Software_Agilerap;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
+            optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-07MEU62\SQLEXPRESS;Initial Catalog=Process_Software_Model; Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
         }
     }
 }
-//Data Source = DESKTOP - 07MEU62\SQLEXPRESS; Initial Catalog = Process_Software_Model; Integrated Security = True; Trust Server Certificate=True
-//Data Source = DESKTOP - 07MEU62\SQLEXPRESS; Integrated Security = True; Connect Timeout = 30; Encrypt = True; Trust Server Certificate=True; Application Intent = ReadWrite; Multi Subnet Failover=False

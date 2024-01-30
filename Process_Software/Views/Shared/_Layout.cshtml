@@ -1,4 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@{
+    string? userSession = Context.Session.GetString(ProcessDB.SessionName.UserSession.ToString());
+}
+@{
+    var StatusValueList = ViewBag.StatusValue;
+    string userName = ViewBag.UserName;
+}
+
+<p></p>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,23 +17,70 @@
     <link rel="stylesheet" href="~/lib/bootstrapx/bootstrap-multiselect.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Process_Software.styles.css" asp-append-version="true" />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Single+Day&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tifinagh&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Process Software</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Work" asp-action="Index">Process Software</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li>@Html.ActionLink("AssignWork", "Index", "Work", new { area = "" }, new { @class = "nav-link background-black" })</li>
+                        <li>
+                            <a class="nav-link" asp-controller="Work" asp-action="Index"><span>Assigning Tasks</span></a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav flex-grow-0">
+                        <li>
+                            @* <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            @Html.DisplayName("Profile")
+                            </button> *@
+                            <div class="btn-group dropstart">
+                                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" alt="" width="30" height="30">
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="profileDropdown" style="min-width:auto;">
+                                    @if (userSession != null)
+                                    {
+                                        <li class="mt-2" style="display: flex; align-items: center;">
+
+                                            <p style="margin-left: 10px; color: chocolate; white-space: nowrap; display: inline-block;" class="navbar-nav" disabled>Email: @userSession</p>
+                                            <a class="nav-link" asp-controller="Home" asp-action="Profile" asp-route-id="@int.Parse(Context.Session.GetString("UserID"))">
+                                                <span class="btn-md">
+                                                    <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" alt="" width="20" height="20">
+                                                </span>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <p style="margin-left:10px; color:darkgreen">Name: @userName</p>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link" asp-controller="Home" asp-action="Logout"><span class="btn btn-outline-danger btn-md">Logout</span></a>
+                                        </li>
+
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <a class="nav-link" asp-controller="Home" asp-action="Login"><span class="btn btn-outline-warning btn-md">Login</span></a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </li>
                     </ul>
                 </div>
+
             </div>
         </nav>
     </header>
@@ -36,7 +92,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - Process_Software - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - Process Software - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

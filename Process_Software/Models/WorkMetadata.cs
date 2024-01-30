@@ -33,6 +33,73 @@ namespace Process_Software.Models
 
         [NotMapped]
         public bool? IsSelectEdit { get; set; }
+        public bool IsEqual(Work workCompare, bool skipProvider = false)
+        {
+            bool ProviderResult = skipProvider;
+
+            if (this.Provider != null && workCompare != null && ProviderResult == false)
+            {
+                List<Provider> originalProvider = this.Provider.ToList();
+                List<Provider> compareProvider = workCompare.Provider.ToList();
+                if (originalProvider.Count == compareProvider.Count)
+                {
+                    for (int i = 0; i < originalProvider.Count; i++)
+                    {
+                        //! Loop all Provider if not Equal will be false
+                        ProviderResult = originalProvider.ToList()[i].IsEqual(compareProvider.ToList()[i]);
+                        if (!ProviderResult) break;
+                    }
+                }
+            }
+            if (!ProviderResult) return false;
+
+            var originalProperties = this.GetType().GetProperties();
+            var compareProperties = workCompare.GetType().GetProperties();
+
+            foreach (var originalProperty in originalProperties)
+            {
+                if (originalProperty.Name == "Provider") continue;
+                if (originalProperty.Name == "UpdateDate") continue;
+                if (originalProperty.Name == "WorkLog") continue;
+
+                var compareProperty = compareProperties.FirstOrDefault(p => p.Name == originalProperty.Name);
+
+                if (compareProperty == null)
+                {
+                    return false;
+                }
+
+                if (originalProperty.Name == "CreateDate")
+                {
+                    var original = originalProperty.GetValue(this);
+                    var compare = compareProperty.GetValue(workCompare);
+                    DateTime? originalDateTime = original as DateTime?;
+                    DateTime? compareDateTime = compare as DateTime?;
+                    if (originalDateTime != null && compareDateTime != null)
+                    {
+                        if (originalDateTime.Value.Hour != compareDateTime.Value.Hour)
+                        {
+                            return false;
+                        }
+                        if (originalDateTime.Value.Minute != compareDateTime.Value.Minute)
+                        {
+                            return false;
+                        }
+                        if (originalDateTime.Value.Second != compareDateTime.Value.Second)
+                        {
+                            return false;
+                        }
+                    }
+                    continue;
+                }
+
+                if (!object.Equals(originalProperty.GetValue(this), compareProperty.GetValue(workCompare)))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }
 

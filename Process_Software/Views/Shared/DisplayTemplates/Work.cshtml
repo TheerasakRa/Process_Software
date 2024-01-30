@@ -2,7 +2,8 @@
 @{
     List<SelectListItem> StatusDropdownList = ViewBag.StatusDropdownList;
     List<SelectListItem> UserProviserDropdownList = ViewBag.UserProviserDropdownList;
-    var oneDayInMillis = 24 * 60 * 60 * 1000;
+
+    var twoDaysInMillis = 2 * 24 * 60 * 60 * 1000;
     var createdate = Model.CreateDate;
     var currentDate = DateTime.Now;
 
@@ -10,14 +11,14 @@
     if (Model.DueDate == null && createdate.HasValue)
     {
         var timeDifferenceInMillis = (currentDate - createdate.Value).TotalMilliseconds;
-        enforceDueDate = timeDifferenceInMillis > oneDayInMillis;
+        enforceDueDate = timeDifferenceInMillis > twoDaysInMillis;
     }
 }
 
 
 @if (Model.ID != 0)
 {
-    <tr class="text-center @(Model.DueDate == null && enforceDueDate ? "table-danger" : "table-light")">
+    <tr class="text-center @(Model.DueDate == null && enforceDueDate ? "table-danger" : "table-light")" style=" text-align:center; vertical-align:middle;">
         <td>
             @Html.ValueFor(model => model.CreateDate, "{0:dd/MM/yyyy}")
         </td>
@@ -58,14 +59,19 @@
         else
         {
             <td>
-                @Html.DisplayFor(m => m.DueDate, "{0:dd/MM/yyyy}")
+                @Html.ValueFor(m => m.DueDate, "{0:dd/MM/yyyy}")
             </td>
         }
         <td>
-            @foreach (var i in Model.Provider.Where(s => s.User.ID == Model.CreateBy))
+
+            @foreach (var item in UserProviserDropdownList)
             {
-                @Html.DisplayFor(m => i.User.Name)
+                if (Model.CreateBy == int.Parse(item.Value))
+                {
+                    @Html.DisplayName(item.Text)
+                }
             }
+
         </td>
         <td>
             @foreach (var i in Model.Provider)
@@ -93,15 +99,13 @@
         <td>
             <div class="col d-flex justify-content-center align-items-center">
                 <div class="p-3">
-                    @Html.ActionLink("History", "History", new { id = Model.ID }, new { @class = "btn btn-warning" })
+                    @Html.ActionLink("History", "History", new { id = Model.ID }, new { @class = "btn btn-secondary" })
                 </div>
                 <div>
                     @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-warning" })
                 </div>
             </div>
         </td>
-        <td>
-        </td>
     </tr>
-       
+
 }

@@ -2,38 +2,38 @@
 
 @using (Html.BeginForm("Manage", "Work", FormMethod.Post, new { id = "myform", name = "myform", enctype = "multipart/form-data" }))
 {
-    <table class="table table-primary" style="max-width:1200px">
+    <h1>Create Task List</h1>
+    <table class="table table-primary text-center table-bordered" style="max-width:1300px; min-width:900px">
         <thead>
             <tr>
-                <th scope="col" style="max-width:50px;">
-                    @Html.DisplayNameFor(model => model.CreateDate)
+                <th scope="col" style="max-width:100px;">
+                     @Html.DisplayName("Create Date")
                 </th>
-                <th scope="col" class="text-center" style="max-width:150px;">
+                <th scope="col" class="text-center" style="max-width:100px;">
                     @Html.DisplayNameFor(model => model.Project)
                 </th>
-                <th scope="col" class="text-center" style="max-width:150px;">
+                <th scope="col" class="text-center" style="max-width:100px;">
                     @Html.DisplayNameFor(model => model.Name)
                 </th>
-                <th scope="col" class="text-center" style="max-width:150px;">
-                    @Html.DisplayNameFor(model => model.DueDate)
+                <th scope="col" class="text-center" style="max-width:100px;">
+                    @Html.DisplayName("Due Date")
                 </th>
-                <th scope="col" class="text-center" style="max-width:150px;">
+                <th scope="col" class="text-center" style="max-width:100px;">
                     @Html.DisplayName("Assign By/ Requester")
                 </th>
-                <th scope="col" class="text-center" style="max-width:150px;">
+                <th scope="col" class="text-center" style="max-width:100px;">
                     @Html.DisplayName("Assign To/ Provider")
                 </th>
-                <th class="text-center" style="max-width:150px;">
+                <th class="text-center" style="max-width:100px;">
                     @Html.DisplayName("Status")
                 </th>
-                <th class="text-center" style="max-width:150px;">
+                <th class="text-center" style="max-width:100px;">
                     @Html.DisplayNameFor(model => model.Remark)
                 </th>
 
-                <th class="text-center" style="max-width:90px;">
+                <th class="text-center" style="max-width:100px;">
                     @Html.DisplayName("Manage")
                 </th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -54,17 +54,20 @@
         </tbody>
     </table>
 }
+<div class="col-md-2">
+        @Html.ActionLink("Create", "Manage", new {}, new { @class = "btn btn-secondary" })
+    </div>
 <script>
     ﻿document.addEventListener("DOMContentLoaded",
     () => {
 
         $('#select-tops-options').multiselect({
             buttonClass: 'form-select',
-            nonSelectedText: 'Select User',
-            buttonContainer: '<div class="btn-danger" id="select-tops-options-container"></div>',
+            nonSelectedText: 'Select Provider',
+            buttonContainer: '<div class="" id="select-tops-options-container"></div>',
             selectedClass: 'active multiselect-selected',
             numberDisplayed: 5,
-            buttonWidth: '12em',
+            buttonWidth: '10em',
             includeSelectAllOption: true,
             onSelectAll: function (options) {
                 document.getElementById("work_IsSelectAllItem").value = true;
@@ -95,9 +98,10 @@
                 button:
                     '<button type="button" class="multiselect dropdown-toggle" ' +
                     'data-bs-toggle="dropdown"><span class="multiselect-selected-text"></span></button>',
-                resetButton: '<div class="multiselect-reset text-center p-2"><button type="button" class="btn btn-sm btn-danger"></button></div>'
+                resetButton: '<div class="multiselect-reset text-center p-2"><button type="button" class="btn btn-sm "></button></div>'
             }
         });
 
     });
+    
 </script>

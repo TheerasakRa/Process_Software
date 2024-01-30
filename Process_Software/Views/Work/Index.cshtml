@@ -1,14 +1,37 @@
 ﻿@model IEnumerable<Process_Software.Models.Work>
 
-<h1>รายการงาน</h1>
+<h1>Task List</h1>
 @{
     var StatusValueList = ViewBag.StatusValue;  
+    string userName = ViewBag.UserName;
 }
-<table class="table table-primary text-center">
+@if (TempData["AlertMassage"] != null)
+{
+    <div id="alertDiv" class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["AlertMassage"]
+        Welcome account @userName
+        <button type="button" class="close closeAlert" data-bs-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('#alertDiv').addClass('d-none');
+            }, 3000);
+        });
+    </script>
+}
+
+
+@* <h1>Welcom @userName</h1> *@
+<table class="table table-primary text-center table-bordered">
     <thead>
         <tr>
             <th scope="col" class="text-center">
-                @Html.DisplayNameFor(model => model.CreateDate)
+                @Html.DisplayName("Create Date")
             </th>
             <th scope="col" class="text-center">
                 @Html.DisplayNameFor(model => model.Project)
@@ -18,7 +41,7 @@
             </th>
 
             <th scope="col" class="text-center">
-                @Html.DisplayNameFor(model => model.DueDate)
+                @Html.DisplayName("Due Date")
             </th>
             <th scope="col" class="text-center">
                 @Html.DisplayName("Assign By/ Requester")
@@ -51,5 +74,4 @@
         @Html.ActionLink("Create", "Manage", new {}, new { @class = "btn btn-secondary" })
     </div>
 
-    
 

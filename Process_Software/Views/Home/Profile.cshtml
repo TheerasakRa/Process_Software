@@ -1,0 +1,119 @@
+﻿@model Process_Software.Models.User
+@{
+    string userName = ViewBag.UserName;
+}
+<div class="d-flex justify-content-end">
+    @Html.ActionLink("Close", "Index","Work", new { }, new { @class = " btn btn-secondary" })
+</div>
+<br />
+@using (Html.BeginForm("Profile", "Home", FormMethod.Post, new { id = "manage", name = "manage", enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.Email)
+    @Html.HiddenFor(m => m.CreateBy)
+    @Html.HiddenFor(m => m.UpdateBy)
+    @Html.HiddenFor(m => m.CreateDate)
+    @Html.HiddenFor(m => m.UpdateDate)
+    <div class="card text-center">
+        <div class="card-header">
+            Edit Profile
+        </div>
+        <div class="card-body">
+            <h5 class="card-title text-start">Information</h5>
+
+            <div class="mb-3 row">
+                <div class="col-md-6">
+                    @Html.LabelFor(m => m.Name, htmlAttributes: new { @class = "form-label", @required = "required" })
+                    @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                </div>
+
+                <div class="col-md-6">
+                    @Html.LabelFor(m => m.Role, htmlAttributes: new { @class = "form-label", @required = "required" })
+                    @Html.EditorFor(m => m.Role, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <div class="col-md-6">
+                    @Html.LabelFor(m => m.LineID, htmlAttributes: new { @class = "form-label", @required = "required" })
+                    @Html.EditorFor(m => m.LineID, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                </div>
+
+
+            </div>
+
+            <div class="mb-3 row">
+                <div class="col-md-6">
+                    @Html.LabelFor(m => m.Password, htmlAttributes: new { @class = "form-label", @required = "required", oninput = "checkPasswordStrength()" })
+                    @Html.EditorFor(m => m.Password, new { htmlAttributes = new { @class = "form-control", @required = "required", oninput = "checkPasswordStrength()" } })
+                    <p id="passwordStrength" class="text-muted"></p>
+                </div>
+                <div class="col-md-6">
+                    @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label", @required = "required", oninput = "checkPasswordMatch();" })
+                    @Html.EditorFor(m => m.ConfirmPassword, new { htmlAttributes = new { @class = "form-control", @required = "required", oninput = "checkPasswordMatch();" } })
+                    <div id="passwordMatch" class="text-muted"></div>
+                </div>
+            </div>
+
+            <div>
+                <input type="submit" value="Submit" class="w-100 btn btn-lg btn-primary" />
+
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            Account Created: @Html.ValueFor(m => m.CreateDate);
+        </div>
+    </div>
+}
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function checkPasswordMatch() {
+            var password = $("#Password").val();
+            var confirmPassword = $("#ConfirmPassword").val();
+
+            if (password === confirmPassword) {
+                $("#passwordMatch").text("รหัสผ่านตรงกัน");
+            } else {
+                $("#passwordMatch").text("รหัสผ่านไม่ตรงกัน");
+            }
+        }
+
+        var easyText = "ง่าย";
+        var easyColor = "red";
+        var mediumText = "ง่าย (ต้องมีตัวอักษรใหญ่, เล็ก, ตัวเลข, และอักขระพิเศษ)";
+        var mediumColor = "orange";
+        var hardText = "ยาก";
+        var hardColor = "green";
+
+        function checkPasswordMatch() {
+            var password = $("#Password").val();
+            var confirmPassword = $("#ConfirmPassword").val();
+
+            if (password === confirmPassword) {
+                $("#passwordMatch").text("รหัสผ่านตรงกัน").css("color", hardColor);
+            } else {
+                $("#passwordMatch").text("รหัสผ่านไม่ตรงกัน").css("color", easyColor);
+            }
+        }
+
+        function checkPasswordStrength() {
+            var password = $("#Password").val();
+
+            // Check minimum length
+            if (password.length < 8) {
+                $("#passwordStrength").text("ความแข็งแกร่งของรหัสผ่าน: " + easyText).css("color", easyColor);
+                return;
+            }
+
+            if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password) || !/[!#$%^&*(),._?":{}|<>]/.test(password)) {
+                $("#passwordStrength").text("ความแข็งแกร่งของรหัสผ่าน: " + mediumText).css("color", mediumColor);
+                return;
+            }
+
+            $("#passwordStrength").text("ความแข็งแกร่งของรหัสผ่าน: " + hardText).css("color", hardColor);
+        }
+
+
+    </script>
+}

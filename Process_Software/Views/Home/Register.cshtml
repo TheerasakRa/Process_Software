@@ -1,0 +1,76 @@
+﻿@model Process_Software.Models.User
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/AuthLayout.cshtml";
+    var FailName = ViewBag.FailName;
+}
+
+@using (Html.BeginForm("Register", "Home", FormMethod.Post, new { id = "registerForm" }))
+{
+    @Html.HiddenFor(m => m.RememberMe)
+
+    <h2>Create a new account.</h2>
+    <hr />
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    <div class="form-floating mb-3">
+        <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+        <label asp-for="Email"><a style="color:red;">*</a> Email</label>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" oninput="checkPasswordStrength()" />
+        <label asp-for="Password"><a style="color:red;">*</a> Password</label>
+        <p id="passwordStrength" class="text-muted"></p>
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" oninput="checkPasswordMatch();" />
+        <label asp-for="ConfirmPassword"><a style="color:red;">*</a> Confirm Password</label>
+        <div id="passwordMatch" class="text-muted"></div>
+        <span id="passwordMatch" class="text-danger"></span>
+    </div>
+    <div class="form-floating mb-3">
+        <input asp-for="Name" class="form-control" autocomplete="name" aria-required="true" placeholder="name" />
+        <label asp-for="Name"><a style="color:red;">*</a> Name</label>
+        <div class="text-muted" >@FailName</div>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div>
+        <input type="submit" value="Register" class="w-100 btn btn-lg btn-primary" />
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function checkPasswordMatch() {
+            var password = $("#Password").val();
+            var confirmPassword = $("#ConfirmPassword").val();
+
+            if (password === confirmPassword) {
+                $("#passwordMatch").text("Password match").css("color", "green");
+                    } else {
+                $("#passwordMatch").text("Password don't match").css("color", "red");
+            }
+        }
+
+        function checkPasswordStrength() {
+            var password = $("#Password").val();
+
+            // Check minimum length
+            if (password.length < 8) {
+                $("#passwordStrength").text("Your password strength: Weak").css("color", "red");
+                return;
+            }
+
+            if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password) || !/[!#$%^&*(),._?":{}|<>]/.test(password)) {
+                $("#passwordStrength").text("Your password strength: Moderate (Must contain uppercase, lowercase letters, numbers, and special characters)").css("color", "orange");
+                return;
+            }
+
+            $("#passwordStrength").text("Your password strength: Strong").css("color", "green");
+        }
+    </script>
+}

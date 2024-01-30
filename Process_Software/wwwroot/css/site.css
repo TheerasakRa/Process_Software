@@ -1,26 +1,32 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
+/*header {
+    font-family: Roboto,sans-serif;
+}*/
 
 body {
     margin-bottom: 60px;
-    font-family: Noto Sans Thai,sans-serif;
+    /*font-family: Single Day,sans-serif;*/
+    font-family: Roboto,sans-serif;
 }
+
+/*tab navigation*/
 .login-logout-card .card-header {
     padding: 0px 0px 12px 0px;
 }
@@ -42,4 +48,8 @@ body {
 
 .login-logout-card .card-body {
     padding: 10px 20px;
+}
+
+.closeAlert{
+    z-index:1000;
 }

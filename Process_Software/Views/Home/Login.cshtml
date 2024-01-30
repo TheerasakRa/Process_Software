@@ -1,0 +1,46 @@
+﻿@model Process_Software.Models.User
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/AuthLayout.cshtml"; // Fix the path here
+}
+@Html.HiddenFor(m => m.ConfirmPassword)
+@using (Html.BeginForm("Login", "Home", FormMethod.Post, new { id = "loginForm" }))
+{
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <section>
+                <form id="account" method="post">
+                    <h2>Login</h2>
+                    <hr />
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                        <label asp-for="Email"> <a style="color:red;">*</a> Email</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" oninput="checkPasswordStrength()" />
+                        <label asp-for="Password"><a style="color:red;">*</a> Password</label>
+                        <p id="passwordStrength" class="text-muted"></p>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    @* <div class="checkbox mb-3">
+                        <label asp-for="RememberMe" class="form-label">
+                            <input class="form-check-input" asp-for="RememberMe" />
+                            @Html.DisplayNameFor(m => m.RememberMe)
+                        </label>
+                    </div> *@
+                    <div style="color:red">
+                        @ViewBag.FailMes
+                    </div>
+                    <div>
+                        <input type="submit" value="Log in" class="w-100 btn btn-lg btn-primary" />
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+}
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

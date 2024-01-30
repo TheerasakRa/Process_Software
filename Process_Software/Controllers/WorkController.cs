@@ -9,7 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using Process_Software.Common;
 using Process_Software.Models;
+using System.Net;
+using System.Net.Mail;
+using Process_Software.Helpter;
+using Process_Software.Service;
 
 namespace Process_Software.Controllers
 {
@@ -22,30 +27,65 @@ namespace Process_Software.Controllers
         static List<SelectListItem> _UserProviserDropdownList = new List<SelectListItem>();
         string DefaultStatus = "Waiting Plan";
         string WaitingStatus = "Waiting";
+        private readonly IEmailService emailService;
+        public WorkController(IEmailService emailService)
+        {
+            this.emailService = emailService;
+
+        }
         // GET: Work
         public IActionResult Index(int? id)
         {
+            ClearStatic();
+            InitDataStatic();
+
+            User? user = GetSessionUser();
+
+            if (user == null) return RedirectToAction("Login", "Home");
+
             var work = GetWork();
+            ViewbagData();
 
             return View(work);
         }
+
+        private User? GetSessionUser()
+        {
+            if (HttpContext.Session.GetString(ProcessDB.SessionName.UserSession.ToString()) != null)
+            {
+                string? userSession = HttpContext.Session.GetString(ProcessDB.SessionName.UserSession.ToString());
+                User? user = db.User.Where(s => s.Email == userSession).FirstOrDefault();
+                return user;
+            }
+            else
+            {
+                //! Else return null
+                return null;
+            }
+        }
+
         public IActionResult Manage(int? id)
         {
             ClearStatic();
+            InitDataStatic();
 
             _WorkID = id;
 
+            User? user = GetSessionUser();
+
+            if (user == null) return RedirectToAction("Login", "Home");
             var workList = GetWork();
+            Work work = new Work() { IsDelete = false, CreateDate = DateTime.Now, CreateBy = user.ID };
             Work works = new Work()
             {
                 CreateDate = DateTime.Now,
                 UpdateDate = DateTime.Now,
                 IsDelete = false,
                 IsSelectAllItem = false,
-                CreateBy = db.User.First().ID,
+                CreateBy = int.Parse(HttpContext.Session.GetString(ProcessDB.SessionName.UserID.ToString())),
+                UpdateBy = int.Parse(HttpContext.Session.GetString(ProcessDB.SessionName.UserID.ToString()))
             };
             workList.Add(works);
-            InitDataStatic();
             ViewbagData();
             return View(workList);
         }
@@ -72,8 +112,8 @@ namespace Process_Software.Controllers
             {
 
                 work.Provider = new List<Provider>();
-                work.CreateBy = db.User.First().ID;
-                work.UpdateBy = work.CreateBy;
+                work.CreateBy = int.Parse(HttpContext.Session.GetString(ProcessDB.SessionName.UserID.ToString()));
+                work.UpdateBy = int.Parse(HttpContext.Session.GetString(ProcessDB.SessionName.UserID.ToString()));
                 work.CreateDate = DateTime.Now;
                 if (work.IsSelectAllItem == true)
                 {
@@ -83,6 +123,8 @@ namespace Process_Software.Controllers
                         {
                             UpdateDate = DateTime.Now,
                             CreateDate = DateTime.Now,
+                            CreateBy = work.CreateBy,
+                            UpdateBy = work.UpdateBy,
                             IsDelete = false,
                             UserID = item.ID
 
@@ -122,6 +164,8 @@ namespace Process_Software.Controllers
                                 UpdateDate = DateTime.Now,
                                 CreateDate = DateTime.Now,
                                 IsDelete = false,
+                                CreateBy = work.CreateBy,
+                                UpdateBy = work.UpdateBy,
                                 UserID = Convert.ToInt32(item)
                             };
                             db.Provider.Add(provider);
@@ -191,13 +235,16 @@ namespace Process_Software.Controllers
                 db.ProviderLog.Add(providerLog);
                 db.SaveChanges();
             }
+            SendMail(work);
 
             return RedirectToAction("Index");
         }
-
         public IActionResult History(int? id)
         {
-            //var works = GetWork();
+            ClearStatic();
+            InitDataStatic();
+            ViewbagData();
+
             var work = db.Work
                         .Include(s => s.WorkLog).ThenInclude(s => s.ProviderLog).ThenInclude(s => s.User)
                         .Include(s => s.WorkLog).ThenInclude(s => s.Status)
@@ -216,18 +263,101 @@ namespace Process_Software.Controllers
             if (work.WorkLog.Count < 2)
             {
                 ViewBag.HistoryText = "Project " + work.Project + " has no changed";
-                return View(workDBList);
             }
 
             for (int i = 1; i < work.WorkLog.Count; i++)
             {
                 WorkLog workLogNext = GetWorkLogNextByIndex(i, work);
                 work.WorkLog.ToList()[i - 1].nextWorklog = workLogNext;
+                var a = db.WorkLog.Where(s => s.WorkID == id).ToList();
+                ViewBag.ID = id;
+
+                for (int w = 0; w < a.Count() - 1; w++)
+                {
+                    a[w].LogContent = "";
+
+                    if (a[w] != a.LastOrDefault())
+                    {
+                        var updateBy = db.User.Where(s => s.ID == a[w + 1].UpdateBy).FirstOrDefault();
+                        ViewBag.UpdateBy = a[w].LogContent += "Update by: " + updateBy?.Name;
+                    }
+                }
             }
 
+            var worklogs = work.WorkLog.ToList();
+            worklogs.Reverse();
+            work.WorkLog = worklogs;
             workDBList[workDBList.FindIndex(s => s.ID == id)] = work;
+
+
             return View(workDBList);
         }
+        private void SendMail(Work work)
+        {
+            try
+            {
+                Mailrequest mailrequest = new Mailrequest();
+                var EmailUser = HttpContext.Session.GetString(ProcessDB.SessionName.UserSession.ToString());
+
+                var providerEmails = GetProviderEmails();
+                providerEmails.Add(EmailUser);
+
+                if (providerEmails.Any())
+                {
+                    mailrequest.ToEmails = providerEmails;
+                    mailrequest.Subject = "Operator";
+                    mailrequest.Body = GetHtmlContent(work);
+                    emailService.SendEmail(mailrequest);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions
+                throw;
+            }
+        }
+        private List<string> GetProviderEmails()
+        {
+            var providerEmails = db.Provider
+                .Where(provider => !provider.IsDelete)
+                .Join(db.User,
+                      provider => provider.UserID,
+                      user => user.ID,
+                      (provider, user) => user.Email)
+                .ToList();
+
+            return providerEmails;
+        }
+        private string GetHtmlContent(Work work)
+        {
+            var works = db.Work.Where(w => !w.IsDelete).ToList();
+            User? user = GetSessionUser();
+
+            ViewBag.UserName = user.Name;
+
+            string response = "<div style=\"width:80%;margin:20px auto;background-color:#f0f8ff;border-radius:10px;padding:20px;text-align:center;\">";
+            response += "<h1 style=\"color:#333;\">Project: " + work.Project + "</h1>";
+            response += "<img src=\"https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg?w=1060&t=st=1706598619~exp=1706599219~hmac=3e18aafdb40c14f2e2d4df6f02a3d8b9aff5fa26a6009054418bc40db3ccb011\" style=\"max-width:100%;border-radius:10px;margin:15px 0;\" />";
+
+            if (work.DueDate != null)
+            {
+                response += "<h2 style=\"color:#333;\">Due Date: " + work.DueDate + "</h2>";
+            }
+            else
+            {
+                response += "<h2 style=\"color:#333;\">Due Date: <span style=\"color:red;\">ไม่มีกำหนดการ</span></h2>";
+            }
+
+            response += "<a href=\"https://www.facebook.com/profile.php?id=100014450434050\" style=\"display:block;color:#007bff;text-decoration:none;margin:10px 0;\">Please Add Friend by clicking the link</a>";
+            response += "<div style=\"margin-top:20px;\"><h1 style=\"color:#333;\">Contact us:</h1></div>";
+            response += "<p style=\"color:#555;margin:0;\">" + ViewBag.UserName + "</p>";
+            response += "</div>";
+
+            return response;
+        }
+
+
+
         private WorkLog GetWorkLogNextByIndex(int index, Work workForLog)
         {
             WorkLog tempWorkLogNext = new WorkLog()
@@ -238,23 +368,21 @@ namespace Process_Software.Controllers
                 Status = workForLog.WorkLog.ToList()[index].Status,
                 StatusID = workForLog.WorkLog.ToList()[index].StatusID,
                 Remark = workForLog.WorkLog.ToList()[index].Remark,
-                ProviderLog = workForLog.WorkLog.ToList()[index].ProviderLog
+                CreateBy = workForLog.WorkLog.ToList()[index].CreateBy,
+                ProviderLog = workForLog.WorkLog.ToList()[index].ProviderLog,
+                UpdateDate = workForLog.WorkLog.ToList()[index].UpdateDate
             };
             return tempWorkLogNext;
         }
         private void InitDataStatic()
         {
-
-            foreach (var i in db.Status)
+            foreach (var i in db.Status.ToList())
             {
-                SelectListItem selectListItem = new SelectListItem() { Text = i.StatusName, Value = i.ID.ToString() };
-                _ProviderDropdownList.Add(selectListItem);
+                _ProviderDropdownList.Add(new SelectListItem() { Text = i.StatusName, Value = i.ID.ToString() });
             }
-
-            foreach (var i in db.User)
+            foreach (var i in db.User.ToList())
             {
-                SelectListItem selectListItem = new SelectListItem() { Text = i.Name, Value = i.ID.ToString() };
-                _UserProviserDropdownList.Add(selectListItem);
+                _UserProviserDropdownList.Add(new SelectListItem() { Text = i.Name, Value = i.ID.ToString() });
             }
         }
         private void ClearStatic()
@@ -265,6 +393,9 @@ namespace Process_Software.Controllers
         }
         private void ViewbagData()
         {
+            User? user = GetSessionUser();
+
+            ViewBag.UserName = user.Name;
             ViewBag.UserValue = db.User.ToList();
             ViewBag.StatusDropdownList = _ProviderDropdownList;
             ViewBag.UserProviserDropdownList = _UserProviserDropdownList;
@@ -273,17 +404,10 @@ namespace Process_Software.Controllers
 
         public List<Work> GetWork()
         {
-            var work = db.Work.Include(m => m.Status).Include(s => s.Provider).Include(w => w.WorkLog).ToList();
-
-            foreach (var item in work)
-            {
-                foreach (var item2 in item.Provider)
-                {
-                    item2.User = db.User.Find(item2.UserID);
-                }
-            }
-
-            return work;
+            return db.Work.Where(s => s.IsDelete == false)
+               .Include(s => s.Provider).ThenInclude(inc => inc.User)
+               .Include(s => s.Status)
+               .ToList();
         }
         public IActionResult Edit(int? id)
         {
@@ -327,9 +451,35 @@ namespace Process_Software.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Work work)
         {
+            var work1 = db.Work.Where(s => s.ID == work.ID).Include(w => w.Provider).FirstOrDefault();
 
+            if (work1 != null &&
+                work1.Project == work.Project &&
+                work1.Name == work.Name &&
+                work1.DueDate == work.DueDate &&
+                work1.StatusID == work.StatusID &&
+                work1.Remark == work.Remark &&
+                work1.Provider.Count == work.Provider.Count
+            )
+            {
+                bool isCheckValue = false;
+                for (int i = 0; i < work.Provider.Count; i++)
+                {
+                    if (work1.Provider.ToList()[i].IsDelete != work.Provider.ToList()[i].IsDelete)
+                    {
+                        isCheckValue = true;
+                        break
+                            ;
+                    }
+                }
+                if (!isCheckValue)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+            db.ChangeTracker.Clear();
+            work.UpdateBy = int.Parse(HttpContext.Session.GetString(ProcessDB.SessionName.UserID.ToString()));
             work.CreateDate = DateTime.Now;
-            work.CreateBy = db.User.First().ID;
             bool isCheck = false;
             if (work.ProvidersID != null || work.IsSelectAllItem == true)
             {
@@ -370,6 +520,8 @@ namespace Process_Software.Controllers
                                     db.Entry(item).State = EntityState.Modified;
                                     item.UpdateDate = DateTime.Now;
                                     item.IsDelete = false;
+                                    item.UpdateBy = work.UpdateBy;
+                                    item.CreateBy = work.CreateBy;
                                 }
                                 providerids.Remove(i);
                                 break;
@@ -392,6 +544,7 @@ namespace Process_Software.Controllers
                             Provider provider = new Provider()
                             {
                                 CreateBy = work.CreateBy,
+                                UpdateBy = work.UpdateBy,
                                 CreateDate = DateTime.Now,
                                 UpdateDate = DateTime.Now,
                                 IsDelete = false,
@@ -407,8 +560,7 @@ namespace Process_Software.Controllers
             db.Entry(work).State = EntityState.Modified;
             db.SaveChanges();
             work.UpdateDate = DateTime.Now;
-            CultureInfo cultureTHInfo = new CultureInfo("th-TH");
-            work.DueDate = Convert.ToDateTime(work.DueDate, cultureTHInfo);
+
             var workLogDBList = db.WorkLog.Where(s => s.WorkID == work.ID).Include(s => s.ProviderLog).ToList();
 
             WorkLog workLog = new WorkLog()
@@ -421,6 +573,7 @@ namespace Process_Software.Controllers
                 StatusID = work.StatusID,
                 Remark = work.Remark,
                 CreateBy = work.CreateBy,
+                UpdateBy = work.UpdateBy,
                 CreateDate = DateTime.Now,
                 UpdateDate = DateTime.Now,
                 IsDelete = work.IsDelete
@@ -433,7 +586,8 @@ namespace Process_Software.Controllers
                     ProviderLog providerLog = new ProviderLog()
                     {
                         UserID = i.UserID,
-                        CreateBy = i.CreateBy,
+                        CreateBy = workLog.CreateBy,
+                        UpdateBy = workLog.UpdateBy,
                         CreateDate = DateTime.Now,
                         UpdateDate = DateTime.Now,
                         IsDelete = i.IsDelete
@@ -449,7 +603,8 @@ namespace Process_Software.Controllers
                     ProviderLog providerLog = new ProviderLog()
                     {
                         UserID = i.UserID,
-                        CreateBy = i.CreateBy,
+                        CreateBy = workLog.CreateBy,
+                        UpdateBy = workLog.UpdateBy,
                         CreateDate = DateTime.Now,
                         UpdateDate = DateTime.Now,
                         IsDelete = false
@@ -470,8 +625,7 @@ namespace Process_Software.Controllers
             }
             return RedirectToAction("Index");
         }
-
-
+        [HttpPost]
         private bool WorkExists(int id)
         {
             return db.Work.Any(e => e.ID == id);
