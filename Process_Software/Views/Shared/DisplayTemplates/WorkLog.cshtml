@@ -16,7 +16,7 @@
                 @if (Model.UpdateDate != Model.nextWorklog.UpdateDate)
                 {
                     @Html.DisplayName("Update Date: ")
-                    @Html.ValueFor(m => m.nextWorklog.UpdateDate)
+                    @Html.ValueFor(m => m.nextWorklog.UpdateDate, "{0:dd/MM/yyyy hh:mm tt}")
                 }
 
                 <br />
@@ -45,8 +45,7 @@
                     }
                     else
                     {
-                        @Html.ValueFor(model => model.CreateDate, "{0:dd/MM/yyyy}")
-
+                        @Html.DisplayFor(model => model.DueDate)
                     }
                     @Html.DisplayName(" -> ")
                     if (Model.nextWorklog.DueDate == null)
@@ -55,7 +54,7 @@
                     }
                     else
                     {
-                        @Html.ValueFor(m => m.nextWorklog.DueDate, "{0:dd/MM/yyyy}")
+                        @Html.DisplayFor(m => m.nextWorklog.DueDate)
                     }
                     <br />
                 }
@@ -70,38 +69,20 @@
 
 
                 @{
-                    @if (Model.ProviderLog.Where(s => s.IsDelete == false).Count() != Model.nextWorklog.ProviderLog.Where(s => s.IsDelete == false).Count())
+                    if (Model.ProviderLog.Where(s => s.IsDelete == false).Count() != Model.nextWorklog.ProviderLog.Where(s => s.IsDelete == false).Count())
                     {
                         @Html.DisplayName("Provider: ")
-                        string oldUser = "";
-                        string newUser = "";
-                        foreach (var i in Model.ProviderLog.Where(s => s.IsDelete == false))
-                        {
-                            if (i == Model.ProviderLog.Last())
-                            {
-                                oldUser += i.User.Name;
-                            }
-                            else
-                            {
-                                oldUser += i.User.Name + ",";
-                            }
-                        }
-                        foreach (var i in Model.nextWorklog.ProviderLog.Where(s => s.IsDelete == false))
-                        {
-                            if (i == Model.nextWorklog.ProviderLog.Last())
-                            {
-                                newUser += i.User.Name;
-                            }
-                            else
-                            {
-                                newUser += i.User.Name + ",";
-                            }
-                        }
+
+                        string oldUser = string.Join(", ", Model.ProviderLog.Where(s => s.IsDelete == false).Select(s => s.User.Name));
+                        string newUser = string.Join(", ", Model.nextWorklog.ProviderLog.Where(s => s.IsDelete == false).Select(s => s.User.Name));
+
                         @Html.DisplayName(oldUser + " -> " + newUser)
 
                         <br />
                     }
                 }
+
+
                 @if (Model.Remark != Model.nextWorklog.Remark)
                 {
                     @Html.DisplayName("Remark: ")

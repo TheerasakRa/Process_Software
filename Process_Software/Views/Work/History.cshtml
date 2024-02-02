@@ -15,7 +15,7 @@
                     @Html.DisplayNameFor(model => model.Name)
                 </th>
                 <th scope="col" class="text-center" style="max-width:150px;">
-                    @Html.DisplayName("Due Date")
+                    @Html.DisplayNameFor(model => model.DueDate)
                 </th>
                 <th scope="col" class="text-center" style="max-width:150px;">
                     @Html.DisplayName("Assign By/ Requester")
@@ -24,7 +24,7 @@
                     @Html.DisplayName("Assign To/ Provider")
                 </th>
                 <th class="text-center" style="max-width:150px;">
-                    @Html.DisplayName("Status")
+                    @Html.DisplayNameFor(model => model.Status)
                 </th>
                 <th class="text-center" style="max-width:150px;">
                     @Html.DisplayNameFor(model => model.Remark)
@@ -40,6 +40,10 @@
         </tbody>
     </table>
 }
-<div class="col-md-2">
-    @Html.ActionLink("Create", "Manage", new { }, new { @class = "btn btn-secondary" })
+<div class="col-xl-12">
+    <div class="d-flex justify-content-between align-content-center">
+        @Html.ActionLink("Create", "Manage", new { }, new { @class = "btn btn-secondary" })
+        <a asp-action="Index" class="btn btn-danger d-flex justify-content-end">Back</a>
+    </div>
 </div>
+

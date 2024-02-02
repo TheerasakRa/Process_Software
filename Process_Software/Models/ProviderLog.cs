@@ -1,6 +1,6 @@
 ﻿namespace Process_Software.Models
 {
-    public class ProviderLog
+    public partial class ProviderLog
     {
         public int ID { get; set; }
         public int? WorkLogID { get; set; }

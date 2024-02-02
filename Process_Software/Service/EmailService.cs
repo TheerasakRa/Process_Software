@@ -17,13 +17,12 @@ namespace Process_Software.Service
         public void SendEmail(Mailrequest mailrequest)
         {
             var email = new MimeMessage();
-            email.Sender = MailboxAddress.Parse(emailSettings.Email);
-
+            //email.Sender = MailboxAddress.Parse(emailSettings.Email);
+            email.From.Add(new MailboxAddress("Assigned Task", emailSettings.Email));
             foreach (var toEmail in mailrequest.ToEmails)
             {
                 email.To.Add(MailboxAddress.Parse(toEmail));
             }
-
             email.Subject = mailrequest.Subject;
             var builder = new BodyBuilder();
 
@@ -37,6 +36,5 @@ namespace Process_Software.Service
             smtp.Send(email);
             smtp.Disconnect(true);
         }
-
     }
 }

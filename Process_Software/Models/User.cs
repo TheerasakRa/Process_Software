@@ -10,21 +10,13 @@ namespace Process_Software.Models
         [ValidateNever]
         public int ID { get; set; }
         public string? Name { get; set; }
-        [Required]
-        [Display(Name = "Password")]
-        [DataType(DataType.Password)]
         public string? Password { get; set; }
-        [Required]
-        [Display(Name = "Email")]
-        [DataType(DataType.EmailAddress)]
         public string? Email { get; set; }
         public string? LineID { get; set; }
         public string? Role { get; set; }
         public int? CreateBy { get; set; }
-        [DataType(DataType.DateTime)]
         public DateTime? CreateDate { get; set; }
         public int? UpdateBy { get; set; }
-        [DataType(DataType.DateTime)]
         public DateTime? UpdateDate { get; set; }
         public bool IsDelete { get; set; }
 

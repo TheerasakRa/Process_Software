@@ -5,11 +5,10 @@
     var StatusValueList = ViewBag.StatusValue;  
     string userName = ViewBag.UserName;
 }
-@if (TempData["AlertMassage"] != null)
+@if (TempData["AlertMessage"] != null)
 {
     <div id="alertDiv" class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["AlertMassage"]
-        Welcome account @userName
+        Welcome account : <strong>@userName</strong>
         <button type="button" class="close closeAlert" data-bs-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>

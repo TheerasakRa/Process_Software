@@ -1,5 +1,5 @@
 ﻿@{
-    string? userSession = Context.Session.GetString(ProcessDB.SessionName.UserSession.ToString());
+    string? userSession = GlobalVariable.GetUserEmail();
 }
 @{
     var StatusValueList = ViewBag.StatusValue;
@@ -23,7 +23,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow fixed-top">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Work" asp-action="Index">Process Software</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -48,13 +48,16 @@
                                 <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                     <img src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" alt="" width="30" height="30">
                                 </button>
+                                @* <button id="toggleModeBtn" class="btn btn-outline-secondary">
+                                    Toggle Mode
+                                </button> *@
                                 <ul class="dropdown-menu" aria-labelledby="profileDropdown" style="min-width:auto;">
                                     @if (userSession != null)
                                     {
                                         <li class="mt-2" style="display: flex; align-items: center;">
 
                                             <p style="margin-left: 10px; color: chocolate; white-space: nowrap; display: inline-block;" class="navbar-nav" disabled>Email: @userSession</p>
-                                            <a class="nav-link" asp-controller="Home" asp-action="Profile" asp-route-id="@int.Parse(Context.Session.GetString("UserID"))">
+                                            <a class="nav-link" asp-controller="Home" asp-action="Profile" asp-route-id="@GlobalVariable.UserID">
                                                 <span class="btn-md">
                                                     <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" alt="" width="20" height="20">
                                                 </span>
@@ -102,3 +105,69 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+<style>
+    body.dark-mode {
+        background-color: #121212; /* สีพื้นหลังที่เข้ม */
+        /* color: #ffffff; /* สีของตัวหนังสือในโหมดสีสว่าง */ */
+    }
+
+        body.dark-mode .navbar {
+            background-color: #333; /* สีพื้นหลังของแถบนาวบาร์ที่เข้ม */
+            /* color: #ffffff; /* สีของตัวหนังสือในแถบนาวบาร์ */ */
+        }
+
+        body.dark-mode a,
+        body.dark-mode p,
+        body.dark-mode span {
+            /* color: #ffffff; /* สีของตัวหนังสือในองค์ประกอบอื่น ๆ */ */
+        }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Check if the user has a preferred mode stored in local storage
+        var preferredMode = localStorage.getItem('preferredMode');
+
+        // If preferred mode is 'dark', apply dark mode
+        if (preferredMode === 'dark') {
+            enableDarkMode();
+        }
+
+        // Toggle mode when the button is clicked
+        document.getElementById('toggleModeBtn').addEventListener('click', function () {
+            toggleDarkMode();
+        });
+    });
+    function toggleDarkMode() {
+        var body = document.body;
+
+        // Check if dark mode is currently enabled
+        var darkModeEnabled = body.classList.contains('dark-mode');
+
+        // Toggle between dark and light mode
+        if (darkModeEnabled) {
+            enableLightMode();
+        } else {
+            enableDarkMode();
+        }
+    }
+
+    function enableDarkMode() {
+        var body = document.body;
+
+        // Enable dark mode
+        body.classList.add('dark-mode');
+
+        // Save preferred mode to local storage
+        localStorage.setItem('preferredMode', 'dark');
+    }
+
+    function enableLightMode() {
+        var body = document.body;
+
+        // Disable dark mode
+        body.classList.remove('dark-mode');
+
+        // Save preferred mode to local storage
+        localStorage.setItem('preferredMode', 'light');
+    }
+</script>

@@ -13,7 +13,7 @@
     <tr class="table table-striped table-light">
 
         <td style=" min-width:120px;">
-            @Html.ValueFor(m => work.CreateDate, "{0:dd/MM/yyyy}")
+            @Html.DisplayFor(m => work.CreateDate)
         </td>
         <td>
             @Html.DisplayFor(m => work.Project)
@@ -22,7 +22,7 @@
             @Html.DisplayFor(m => work.Name)
         </td>
         <td style=" min-width:120px;">
-            @Html.ValueFor(model => work.DueDate, "{0:dd/MM/yyyy}")
+            @Html.DisplayFor(model => work.DueDate)
 
         </td>
         <td>
@@ -108,16 +108,6 @@
                     </td>
                 </tr>
             </table>
-
-
         </td>
     </tr>
-
-
 }
-
-<style>
-    .pre-line {
-        white-space: pre-line;
-    }
-</style>

@@ -20,7 +20,7 @@
 {
     <tr class="text-center @(Model.DueDate == null && enforceDueDate ? "table-danger" : "table-light")" style=" text-align:center; vertical-align:middle;">
         <td>
-            @Html.ValueFor(model => model.CreateDate, "{0:dd/MM/yyyy}")
+            @Html.DisplayFor(model => model.CreateDate)
         </td>
         <td>
             @Html.DisplayFor(m => m.Project)
@@ -59,7 +59,7 @@
         else
         {
             <td>
-                @Html.ValueFor(m => m.DueDate, "{0:dd/MM/yyyy}")
+                @Html.DisplayFor(m => m.DueDate)
             </td>
         }
         <td>
@@ -74,22 +74,12 @@
 
         </td>
         <td>
-            @foreach (var i in Model.Provider)
+            @if (Model.Provider.Any())
             {
-                if (i.IsDelete != true)
-                {
-                    if (i == Model.Provider.Last())
-                    {
-                        @Html.DisplayFor(m => i.User.Name)
-                    }
-                    else
-                    {
-                        @Html.DisplayFor(m => i.User.Name)
-                        @Html.DisplayName(" , ")
-                    }
-                }
+                @Html.Raw(string.Join(" , ", Model.Provider.Where(i => !i.IsDelete).Select(i => i.User.Name)))
             }
         </td>
+
         <td>
             @Html.DisplayFor(m => m.Status.StatusName)
         </td>
