@@ -94,7 +94,7 @@
                     @* @Html.ActionLink("History", "History", new { id = Model.ID }, new { @class = "btn btn-secondary" }) *@
                     <a asp-action="History" 
                        asp-controller="Work"
-                       asp-route-id="@GlobalVariable.UserID"
+                       asp-route-id="@Context.Session.GetInt32("UserID")"
                        asp-route-Workid="@Model.ID"
                        asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
                        asp-route-Project="@Context.Session.GetString("Project")"
@@ -107,7 +107,7 @@
                     }, new { @class = "btn btn-warning" }) *@
                     <a asp-action="Edit" 
                        asp-controller="Work"
-                       asp-route-id="@GlobalVariable.UserID"
+                       asp-route-id="@Context.Session.GetInt32("UserID")"
                        asp-route-Workid="@Model.ID"
                        asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
                        asp-route-Project="@Context.Session.GetString("Project")"

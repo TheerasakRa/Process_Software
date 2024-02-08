@@ -17,11 +17,12 @@ namespace Process_Software.Controllers
         public int? _WorkID;
         public User? GetSessionUser()
         {
+            string getemail = HttpContext.Session.GetString("UserEmail");
             // ตรวจสอบว่ามีการล็อกอินหรือไม่
-            if (GlobalVariable.GetUserEmail != null)
+            if (getemail != null)
             {
                 // ดึงอีเมลผู้ใช้จากระบบเซสชัน
-                string? userSession = GlobalVariable.GetUserEmail().ToString();
+                string? userSession = getemail.ToString();
                 // ค้นหาข้อมูลผู้ใช้จากอีเมลในฐานข้อมูล
                 User? user = db.User.Where(s => s.Email == userSession).FirstOrDefault();
                 return user;
@@ -35,6 +36,14 @@ namespace Process_Software.Controllers
         {
             User? user = GetSessionUser();
             ViewBag.UserName = user.Name;
+            ViewBag.UserValue = db.User.ToList();
+            ViewBag.StatusDropdownList = _StatusDropdownList;
+            ViewBag.UserProviserDropdownList = _UserProviserDropdownList;
+            ViewBag.WorkProjectDropdownList = _WorkProjectDropdownList;
+            ViewBag.FilterProvider = _FilterProvider;
+        }
+        public void ViewbagDataIndex()
+        {
             ViewBag.UserValue = db.User.ToList();
             ViewBag.StatusDropdownList = _StatusDropdownList;
             ViewBag.UserProviserDropdownList = _UserProviserDropdownList;

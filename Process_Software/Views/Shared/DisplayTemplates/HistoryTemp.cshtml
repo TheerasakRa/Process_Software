@@ -81,7 +81,7 @@
                                         <span>@Html.DisplayFor(m => work.Project)</span>
                                     </div>
                                     <a asp-action="Index"
-                                       asp-route-id="@GlobalVariable.UserID"
+                                       asp-route-id="@Context.Session.GetInt32("UserID")"
                                        asp-controller="Work"
                                        asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
                                        asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"

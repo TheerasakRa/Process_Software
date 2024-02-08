@@ -34,7 +34,8 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.UseSession();
+app.UseSession(); // เปิดใช้งานการจัดการเซสชัน
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Login}/{id?}");

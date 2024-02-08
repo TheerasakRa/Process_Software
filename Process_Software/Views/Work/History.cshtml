@@ -52,7 +52,7 @@
         @* @Html.ActionLink("Create", "Manage", new { }, new { @class = "btn btn-secondary" }) *@
         <a asp-action="Manage"
            asp-controller="Work"
-           asp-route-id="@GlobalVariable.UserID"
+           asp-route-id="@Context.Session.GetInt32("UserID")"
            asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
            asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
            asp-route-Project="@Context.Session.GetString("Project")"
@@ -60,7 +60,7 @@
            asp-route-IsChangePage="true"
            class="btn btn-secondary">Create task</a>
         <a asp-action="Index"
-           asp-route-id="@GlobalVariable.UserID"
+           asp-route-id="@Context.Session.GetInt32("UserID")"
            asp-controller="Work"
            asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
            asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"

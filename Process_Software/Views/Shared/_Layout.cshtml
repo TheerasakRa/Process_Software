@@ -1,5 +1,5 @@
 ﻿@{
-    string? userSession = GlobalVariable.GetUserEmail();
+    string? userSession = Context.Session.GetString("UserEmail");
 }
 @{
     var StatusValueList = ViewBag.StatusValue;
@@ -38,7 +38,7 @@
                     </a>
                 </div>
                 <a class="navbar-brand" asp-area="" asp-controller="Work" asp-action="Index"
-                   asp-route-id="@GlobalVariable.UserID"
+                   asp-route-id="@Context.Session.GetInt32("UserID")"
                    asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
                    asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
                    asp-route-Project="@Context.Session.GetString("Project")"
@@ -55,7 +55,7 @@
                         <ul class="navbar-nav flex-grow-1">
                             <li>
                                 <a class="nav-link" asp-controller="Work" asp-action="Index"
-                                   asp-route-id="@GlobalVariable.UserID"
+                                   asp-route-id="@Context.Session.GetInt32("UserID")"
                                    asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
                                    asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
                                    asp-route-Project="@Context.Session.GetString("Project")"
@@ -78,7 +78,7 @@
                                     </button>
                                     <div class="dropdown-content" id="myDropdown">
 
-                                        <a asp-controller="Work" asp-action="Home" asp-route-id="@GlobalVariable.UserID"
+                                        <a asp-controller="Work" asp-action="Home" asp-route-id="@Context.Session.GetInt32("UserID")"
                                            asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
                                            asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
                                            asp-route-Project="@Context.Session.GetString("Project")"
@@ -104,7 +104,7 @@
                                                     <div class="mt-2">@userName</div>
                                                 </a>
                                                 <a class="nav-link" asp-controller="Home" asp-action="Profile"
-                                                   asp-route-id="@GlobalVariable.UserID"
+                                                   asp-route-id="@Context.Session.GetInt32("UserID")"
                                                    asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
                                                    asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
                                                    asp-route-Project="@Context.Session.GetString("Project")"

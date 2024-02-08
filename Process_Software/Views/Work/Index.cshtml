@@ -83,7 +83,7 @@
 <div class="col-md-2">
     <a asp-action="Manage"
        asp-controller="Work"
-       asp-route-id="@GlobalVariable.UserID"
+       asp-route-id="@Context.Session.GetInt32("UserID")"
        asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
        asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
        asp-route-Project="@Context.Session.GetString("Project")"

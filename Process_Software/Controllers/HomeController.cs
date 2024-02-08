@@ -31,7 +31,7 @@ namespace Process_Software.Controllers
         {
             if(GlobalVariable.GetUserEmail() != null)
             {
-                return RedirectToAction("Index", "Work", new { FilltersProvidersID = GlobalVariable.GetUserID() });
+                return RedirectToAction("Index", "Work", new { FilltersProvidersID = HttpContext.Session.GetInt32("UserID") });
             }
             return View();
         }
@@ -46,12 +46,13 @@ namespace Process_Software.Controllers
 
                 if (checkdb != null && await HashingHelpers.VerifyHashedPasswordAsync(checkdb.Password, user.Password))
                 {
+                    HttpContext.Session.SetString("UserEmail", checkdb.Email);
+                    HttpContext.Session.SetInt32("UserID", checkdb.ID);
+                    HttpContext.Session.SetString("Default", "Operator");
                     GlobalVariable.SetUserEmail(checkdb.Email);
                     GlobalVariable.SetUserID(checkdb.ID);
-                    HttpContext.Session.SetString("Default", "Operator");
-
                     TempData["AlertMessage"] = "Login successful";
-                    return RedirectToAction("Index", "Work", new { FilltersProvidersID = GlobalVariable.GetUserID() });
+                    return RedirectToAction("Index", "Work", new { FilltersProvidersID = HttpContext.Session.GetInt32("UserID")});
                 }
                 else
                 {
@@ -64,19 +65,15 @@ namespace Process_Software.Controllers
                 Console.WriteLine("Err: " + ex);
                 return View();
             }
-
-            //ModelState.AddModelError("", "Wrong Email or Password");
             return View();
         }
-
-
 
         // ฟังก์ชัน Register ทำหน้าที่แสดงหน้าลงทะเบียน
         public IActionResult Register(int? id)
         {
-            if(GlobalVariable.GetUserEmail() != null)
+            if(HttpContext.Session.GetString("UserEmail") != null)
             {
-                return RedirectToAction("Index", "Work", new { FilltersProvidersID = GlobalVariable.GetUserID() });
+                return RedirectToAction("Index", "Work", new { FilltersProvidersID = HttpContext.Session.GetInt32("UserID") });
             }
             return View();
         }
@@ -102,9 +99,11 @@ namespace Process_Software.Controllers
                 await user.InsertAsync(db);
                 await db.SaveChangesAsync();
 
+                HttpContext.Session.SetString("UserEmail", user.Email);
+                HttpContext.Session.SetInt32("UserID", user.ID);
+                HttpContext.Session.SetString("Default", "Operator");
                 GlobalVariable.SetUserEmail(user.Email);
                 GlobalVariable.SetUserID(user.ID);
-
                 TempData["AlertMessage"] = "Successfully registered";
                 return RedirectToAction("Index", "Work");
             }
@@ -122,6 +121,7 @@ namespace Process_Software.Controllers
             try
             {
                 GlobalVariable.ClearGlobalVariable();
+                HttpContext.Session.Clear();
                 // ลบคุกกี้ที่บันทึกการล็อกอิน
                 Response.Cookies.Delete("UserEmail");
             }
@@ -131,6 +131,7 @@ namespace Process_Software.Controllers
             }
 
             // ล้างข้อมูล GlobalVariable และเปลี่ยนเส้นทางไปยังหน้า Login
+            HttpContext.Session.Clear();
             GlobalVariable.ClearGlobalVariable();
             return RedirectToAction("Login");
         }

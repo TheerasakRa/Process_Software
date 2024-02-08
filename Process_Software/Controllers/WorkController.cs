@@ -54,7 +54,11 @@ namespace Process_Software.Controllers
 
         public IActionResult Index(string? AssignBy, string? FilltersProvidersID, bool FilltersIsSelectAllItem, string? Project, string? Status, bool? IsChangePage, string? ChangeMode)
         {
-            if (string.IsNullOrEmpty(GlobalVariable.GetUserEmail()))
+            // ดึง UserEmail จาก ThreadLocal
+            string? userEmail = HttpContext.Session.GetString("UserEmail");
+
+            // ถ้า UserEmail เป็น null ให้ redirect ไปที่หน้า Login
+            if (userEmail == null)
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -91,7 +95,7 @@ namespace Process_Software.Controllers
             Work work = new Work() { IsDelete = false, CreateDate = DateTime.Now, CreateBy = user.ID };
             Work works = new Work();
             works.CreateDate = DateTime.Now;
-            works.CreateBy = GlobalVariable.GetUserID();
+            works.CreateBy = HttpContext.Session.GetInt32("UserID");
             ViewBag.UserID = works.CreateBy;
             workList.Add(works);
             ViewbagData();

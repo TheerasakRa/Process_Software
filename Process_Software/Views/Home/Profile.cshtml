@@ -6,7 +6,7 @@
 @*     @Html.ActionLink("Close", "Index","Work", new { }, new { @class = " btn btn-secondary" }) *@
     <a asp-action="Index"
        asp-controller="Work"
-       asp-route-id="@GlobalVariable.GetUserID()"
+       asp-route-id="@Context.Session.GetInt32("UserID")"
        asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
        asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
        asp-route-Project="@Context.Session.GetString("Project")"
