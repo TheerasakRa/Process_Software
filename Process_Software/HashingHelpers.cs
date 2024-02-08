@@ -1,5 +1,8 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Process_Software
 {
@@ -10,7 +13,7 @@ namespace Process_Software
         private const int iterations = 350000;
         private static readonly HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
 
-        public static string HashPassword(string password)
+        public static async Task<string> HashPasswordAsync(string password)
         {
             using (var rng = RandomNumberGenerator.Create())
             {
@@ -19,7 +22,7 @@ namespace Process_Software
 
                 using (var pbkdf2 = new Rfc2898DeriveBytes(password, saltBytes, iterations, hashAlgorithm))
                 {
-                    byte[] keyBytes = pbkdf2.GetBytes(keySize);
+                    byte[] keyBytes = await Task.Run(() => pbkdf2.GetBytes(keySize));
                     byte[] resultBytes = new byte[saltSize + keySize];
                     Buffer.BlockCopy(saltBytes, 0, resultBytes, 0, saltSize);
                     Buffer.BlockCopy(keyBytes, 0, resultBytes, saltSize, keySize);
@@ -28,7 +31,8 @@ namespace Process_Software
                 }
             }
         }
-        public static bool VerifyHashedPassword(string hashedPassword, string password)
+
+        public static async Task<bool> VerifyHashedPasswordAsync(string hashedPassword, string password)
         {
             byte[] hashedBytes = Enumerable.Range(0, hashedPassword.Length)
                 .Where(x => x % 2 == 0)
@@ -40,7 +44,7 @@ namespace Process_Software
 
             using (var pbkdf2 = new Rfc2898DeriveBytes(password, saltBytes, iterations, hashAlgorithm))
             {
-                byte[] keyBytes = pbkdf2.GetBytes(keySize);
+                byte[] keyBytes = await Task.Run(() => pbkdf2.GetBytes(keySize));
 
                 for (int i = 0; i < keySize; i++)
                 {

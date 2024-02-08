@@ -25,33 +25,102 @@ body {
     /*font-family: Single Day,sans-serif;*/
     font-family: Roboto,sans-serif;
 }
+
+html, body {
+    background: linear-gradient(-45deg, #0094ff, #23d5ab);
+}
+
 header {
     margin-top: 20px; /* You can adjust the value according to your preference */
 }
+
+.shadow {
+    box-shadow: 7px 8px 4px 4px rgb(0 0 0 / 20%);
+}
+
+.border-redius {
+    border-radius: 25px;
+}
 /*tab navigation*/
-.login-logout-card .card-header {
-    padding: 0px 0px 12px 0px;
+.login-logout-card {
+    border-radius: 15px 50px;
+    box-shadow: 5px 6px 2px 2px rgb(0 0 0 / 20%);
+    min-width: 320px;
+    max-width: 500px;
 }
 
-.login-logout-card ul.nav-tabs {
-    margin: 0px 0px -12px 0px;
+    .login-logout-card .card-header {
+        padding: 0px 0px 12px 0px;
+    }
+
+    .login-logout-card ul.nav-tabs {
+        margin: 0px 0px -12px 0px;
+    }
+
+    .login-logout-card li.nav-item {
+        width: 50%;
+    }
+
+    .login-logout-card a.nav-link  {
+        font-size: 1rem;
+        color: #495057;
+        text-align: center;
+        padding: 1rem;
+        
+    }
+
+    .login-logout-card .card-body {
+        padding: 10px 20px;
+    }
+
+.closeAlert {
+    z-index: 1000;
+}
+/* Common styles for both mobile and computer */
+table {
+    width: 100%;
 }
 
-.login-logout-card li.nav-item {
-    width: 50%;
+.custom-dropdown {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="%23343a40"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>');
+    background-repeat: no-repeat;
+    background-position: right 5px top 50%;
+    padding-right: 25px;
+    background-size: 16px;
 }
 
-.login-logout-card a.nav-link {
-    font-size: 1rem;
-    color: #495057;
-    text-align: center;
-    padding: 1rem;
-}
 
-.login-logout-card .card-body {
-    padding: 10px 20px;
+/* Gradient color for the button */
+.btn-primary {
+    background: linear-gradient(-45deg, #00ffff, #0094ff, #23a6d5, #23d5ab); /* You can change these colors */
+    background-size: 400% 400%;
+    border: none;
+    animation: gradient 15s ease infinite;
 }
+    /* Animation for the button */
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
 
-.closeAlert{
-    z-index:1000;
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+.fixed {
+    position: absolute;
+    bottom: 7px;
+    width: 100%;
+    z-index: 1000; /* Adjust z-index as needed */
+}
+.material-icons.orange600 {
+    color: #FB8C00;
+    margin-right: 10px;
 }

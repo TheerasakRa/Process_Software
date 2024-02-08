@@ -11,7 +11,7 @@
 
         public static void SetUserEmail(string email) => UserEmail = email;
 
-        public static string GetUserEmail() => UserEmail;
+        public static string? GetUserEmail() => UserEmail;
         public static void ClearGlobalVariable()
         {
             UserID = default(int);

@@ -10,19 +10,21 @@
             <td>
                 @if (Model.WorkID == ViewBag.ID)
                 {
+                    <strong class="">Update by: </strong>
+
                     @Html.DisplayFor(m => m.LogContent)
                 }
                 <br />
                 @if (Model.UpdateDate != Model.nextWorklog.UpdateDate)
                 {
-                    @Html.DisplayName("Update Date: ")
+                    <strong class="">Update Date: </strong>
                     @Html.ValueFor(m => m.nextWorklog.UpdateDate, "{0:dd/MM/yyyy hh:mm tt}")
                 }
 
                 <br />
                 @if (Model.Project != Model.nextWorklog.Project)
                 {
-                    @Html.DisplayName("Project: ")
+                    <strong class="">Project: </strong>
                     @Html.DisplayFor(m => m.Project)
                     @Html.DisplayName(" -> ")
                     @Html.DisplayFor(m => m.nextWorklog.Project)
@@ -30,7 +32,8 @@
                 }
                 @if (Model.Name != Model.nextWorklog.Name)
                 {
-                    @Html.DisplayName("Name: ")
+                    <strong class="">Name: </strong>
+
                     @Html.DisplayFor(m => m.Name)
                     @Html.DisplayName(" -> ")
                     @Html.DisplayFor(m => m.nextWorklog.Name)
@@ -38,14 +41,14 @@
                 }
                 @if (Model.DueDate != Model.nextWorklog.DueDate)
                 {
-                    @Html.DisplayName("Due Date: ")
+                    <strong class="">Due Date: </strong>
                     if (Model.DueDate == null)
                     {
                         @Html.DisplayName("Indefinable ")
                     }
                     else
                     {
-                        @Html.DisplayFor(model => model.DueDate)
+                        @Html.ValueFor(model => model.DueDate, "{0:dd/MM/yyyy}")
                     }
                     @Html.DisplayName(" -> ")
                     if (Model.nextWorklog.DueDate == null)
@@ -54,13 +57,13 @@
                     }
                     else
                     {
-                        @Html.DisplayFor(m => m.nextWorklog.DueDate)
+                        @Html.ValueFor(m => m.nextWorklog.DueDate, "{0:dd/MM/yyyy}")
                     }
                     <br />
                 }
                 @if (Model.StatusID != Model.nextWorklog.StatusID)
                 {
-                    @Html.DisplayName("Status: ")
+                    <strong class="">Status: </strong>
                     @Html.DisplayFor(m => m.Status.StatusName)
                     @Html.DisplayName(" -> ")
                     @Html.DisplayFor(m => m.nextWorklog.Status.StatusName)
@@ -69,14 +72,38 @@
 
 
                 @{
-                    if (Model.ProviderLog.Where(s => s.IsDelete == false).Count() != Model.nextWorklog.ProviderLog.Where(s => s.IsDelete == false).Count())
+                    List<ProviderLog> oldProviderLogList = Model.ProviderLog.Where(s => s.IsDelete == false).ToList();
+                    List<ProviderLog> newProviderLogList = Model.nextWorklog.ProviderLog.Where(s => s.IsDelete == false).ToList();
+                    if (oldProviderLogList.Count() != newProviderLogList.Count())
                     {
-                        @Html.DisplayName("Provider: ")
-
-                        string oldUser = string.Join(", ", Model.ProviderLog.Where(s => s.IsDelete == false).Select(s => s.User.Name));
-                        string newUser = string.Join(", ", Model.nextWorklog.ProviderLog.Where(s => s.IsDelete == false).Select(s => s.User.Name));
-
-                        @Html.DisplayName(oldUser + " -> " + newUser)
+                        <strong class="">Provider: </strong>
+                        string oldUser = "";
+                        string newUser = "";
+                        foreach (var i in oldProviderLogList)
+                        {
+                            if (i == oldProviderLogList.Last())
+                            {
+                                oldUser += i.User.Name;
+                            }
+                            else
+                            {
+                                oldUser += i.User.Name + ",";
+                            }
+                        }
+                        foreach (var i in newProviderLogList)
+                        {
+                            if (i == newProviderLogList.Last())
+                            {
+                                newUser += i.User.Name;
+                            }
+                            else
+                            {
+                                newUser += i.User.Name + ",";
+                            }
+                        }
+                        <span class="text-danger">@oldUser</span>
+                        <span class="text-dark fw-bold">--></span>
+                        <span class="text-success">@newUser</span>
 
                         <br />
                     }

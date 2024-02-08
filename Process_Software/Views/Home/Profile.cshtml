@@ -3,7 +3,16 @@
     string userName = ViewBag.UserName;
 }
 <div class="d-flex justify-content-end">
-    @Html.ActionLink("Close", "Index","Work", new { }, new { @class = " btn btn-secondary" })
+@*     @Html.ActionLink("Close", "Index","Work", new { }, new { @class = " btn btn-secondary" }) *@
+    <a asp-action="Index"
+       asp-controller="Work"
+       asp-route-id="@GlobalVariable.GetUserID()"
+       asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
+       asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
+       asp-route-Project="@Context.Session.GetString("Project")"
+       asp-route-Status="@Context.Session.GetString("Status")"
+       asp-route-IsChangePage="true"
+       class="btn btn-secondary mt-2">Close</a>
 </div>
 <br />
 @using (Html.BeginForm("Profile", "Home", FormMethod.Post, new { id = "manage", name = "manage", enctype = "multipart/form-data" }))

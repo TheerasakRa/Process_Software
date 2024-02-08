@@ -2,6 +2,8 @@
 @{
     List<SelectListItem> StatusDropdownList = ViewBag.StatusDropdownList;
     List<SelectListItem> UserProviserDropdownList = ViewBag.UserProviserDropdownList;
+    List<SelectListItem> WorkProjectDropdownList = ViewBag.WorkProjectDropdownList;
+    List<SelectListItem> FilterProvider = ViewBag.FilterProvider;
 
     var twoDaysInMillis = 2 * 24 * 60 * 60 * 1000;
     var createdate = Model.CreateDate;
@@ -19,13 +21,13 @@
 @if (Model.ID != 0)
 {
     <tr class="text-center @(Model.DueDate == null && enforceDueDate ? "table-danger" : "table-light")" style=" text-align:center; vertical-align:middle;">
-        <td>
+        <td style="max-width:150px;">
             @Html.DisplayFor(model => model.CreateDate)
         </td>
-        <td>
+        <td style="max-width:150px;">
             @Html.DisplayFor(m => m.Project)
         </td>
-        <td>
+        <td style="max-width:150px;">
             @Html.DisplayFor(m => m.Name)
         </td>
 
@@ -33,7 +35,7 @@
         {
             @using (Html.BeginForm("Edit", "Work", FormMethod.Post, new { id = "manage", name = "manage", enctype = "multipart/form-data" }))
             {
-                <td>
+                <td style="max-width:150px;">
                     @if (enforceDueDate)
                     {
                         @Html.HiddenFor(m => m.ID)
@@ -58,11 +60,11 @@
         }
         else
         {
-            <td>
+            <td style="max-width:150px;">
                 @Html.DisplayFor(m => m.DueDate)
             </td>
         }
-        <td>
+        <td style="max-width:150px;">
 
             @foreach (var item in UserProviserDropdownList)
             {
@@ -73,26 +75,45 @@
             }
 
         </td>
-        <td>
+        <td style="max-width:150px;">
             @if (Model.Provider.Any())
             {
                 @Html.Raw(string.Join(" , ", Model.Provider.Where(i => !i.IsDelete).Select(i => i.User.Name)))
             }
         </td>
 
-        <td>
+        <td style="max-width:150px;">
             @Html.DisplayFor(m => m.Status.StatusName)
         </td>
-        <td>
+        <td style="max-width:150px;">
             @Html.DisplayFor(m => m.Remark)
         </td>
         <td>
             <div class="col d-flex justify-content-center align-items-center">
                 <div class="p-3">
-                    @Html.ActionLink("History", "History", new { id = Model.ID }, new { @class = "btn btn-secondary" })
+                    @* @Html.ActionLink("History", "History", new { id = Model.ID }, new { @class = "btn btn-secondary" }) *@
+                    <a asp-action="History" 
+                       asp-controller="Work"
+                       asp-route-id="@GlobalVariable.UserID"
+                       asp-route-Workid="@Model.ID"
+                       asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
+                       asp-route-Project="@Context.Session.GetString("Project")"
+                       asp-route-Status="@Context.Session.GetString("Status")"
+                       asp-route-IsChangePage="true"
+                       class="btn btn-secondary">History</a>
                 </div>
                 <div>
-                    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-warning" })
+                    @* @Html.ActionLink("Edit", "Edit", new { id = Model.ID 
+                    }, new { @class = "btn btn-warning" }) *@
+                    <a asp-action="Edit" 
+                       asp-controller="Work"
+                       asp-route-id="@GlobalVariable.UserID"
+                       asp-route-Workid="@Model.ID"
+                       asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
+                       asp-route-Project="@Context.Session.GetString("Project")"
+                       asp-route-Status="@Context.Session.GetString("Status")"
+                       asp-route-IsChangePage="true"
+                    class="btn btn-warning">Edit</a>
                 </div>
             </div>
         </td>

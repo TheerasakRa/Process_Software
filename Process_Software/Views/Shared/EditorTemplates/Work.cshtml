@@ -3,8 +3,8 @@
 @{
     List<SelectListItem> StatusDropdownList = ViewBag.StatusDropdownList;
     List<SelectListItem> UserProviserDropdownList = ViewBag.UserProviserDropdownList;
-}
 
+}
 
 @Html.HiddenFor(m => m.ProvidersID)
 @Html.HiddenFor(m => m.IsSelectAllItem)
@@ -19,7 +19,7 @@
 </div>
 
 <tr class="text-center table-success" style=" text-align:center; vertical-align:middle;">
-    <td style=" min-width:150px;">
+    <td style=" min-width:100px;">
         @Html.DisplayFor(model => model.CreateDate)
     </td>
     <td style="min-width:100px;">
@@ -31,7 +31,7 @@
     <td style="min-width:100px;">
         <input asp-for="DueDate" class="form-control" id="duedateID" placeholder="กรุณากรอกวันที่ครบกำหนด" asp-value="กรุณากรอกวันที่ครบกำหนด" />
     </td>
-    <td style="min-width:100px;">
+    <td style="min-width:200px;">
         @foreach (var item in UserProviserDropdownList)
         {
             if (Model.CreateBy == int.Parse(item.Value))
@@ -41,9 +41,9 @@
         }
     </td>
     <td style="min-width:100px;">
-        <select id="select-tops-options" asp-items="UserProviserDropdownList" class="require" multiple required></select>
+        <select id="select-tops" asp-items="UserProviserDropdownList" class="require" multiple required></select>
     </td>
-    <td style="min-width:100px; ">
+    <td style="min-width:100px; max-width:150px;">
         @if (Model.ID == ViewBag.WorkIDs)
         {
             <select asp-for="StatusID" asp-items="StatusDropdownList" class="form-control custom-dropdown" style="text-align:center; min-width:160px; "></select>
@@ -59,8 +59,15 @@
     </td>
     <td style="min-width:100px;">
         <input type="submit" value="submit" class="btn btn-outline-success" />
-        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-
+        <a asp-action="Index"
+           asp-controller="Work"
+           asp-route-id="@GlobalVariable.UserID"
+           asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
+           asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
+           asp-route-Project="@Context.Session.GetString("Project")"
+           asp-route-Status="@Context.Session.GetString("Status")"
+           asp-route-IsChangePage="true"
+           class="btn btn-secondary">Cancel</a>
     </td>
 </tr>
 
@@ -74,15 +81,50 @@
     });
 
 </script>
-<style>
-    .custom-dropdown {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-image: url('data:image/svg+xml;utf8,<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="%23343a40"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>');
-        background-repeat: no-repeat;
-        background-position: right 5px top 50%;
-        padding-right: 25px;
-        background-size: 16px;
-    }
-</style>
+<script>
+    ﻿document.addEventListener("DOMContentLoaded",
+    () => {
+
+        $('#select-tops').multiselect({
+            buttonClass: 'form-select',
+            nonSelectedText: 'Select User',
+            buttonContainer: '<div class="" id="select-tops-container"></div>',
+            selectedClass: 'active multiselect-selected',
+            numberDisplayed: 5,
+            buttonWidth: '18em',
+            includeSelectAllOption: true,
+            onSelectAll: function (options) {
+                document.getElementById("work_IsSelectAllItem").value = true;
+            },
+            onDeselectAll: function (options) {
+                document.getElementById("work_IsSelectAllItem").value = false;
+            },
+            onChange: function (option, checked) {
+                document.getElementById("work_IsSelectAllItem").value = false;
+
+                if (checked) {
+                    document.querySelectorAll(`[value="${$(option[0])[0].value}"]`)[1].ariaChecked = "true";
+                    document.querySelectorAll(`[value="${$(option[0])[0].value}"]`)[0].ariaChecked = "true";
+                } else {
+                    document.querySelectorAll(`[value="${$(option[0])[0].value}"]`)[1].ariaChecked = "false";
+                    document.querySelectorAll(`[value="${$(option[0])[0].value}"]`)[0].ariaChecked = "false";
+                }
+                var toppings = $('#select-tops option:selected');
+
+                var selected = [];
+                $(toppings).each(function (index, item) {
+                    selected.push([$(this).val()]);
+                });
+
+                document.getElementById("work_ProvidersID").value = selected.join(',');
+            },
+            templates: {
+                button:
+                    '<button type="button" class="multiselect dropdown-toggle" ' +
+                    'data-bs-toggle="dropdown"><span class="multiselect-selected-text"></span></button>',
+                resetButton: '<div class="multiselect-reset text-center p-2"><button type="button" class="btn btn-sm "></button></div>'
+            }
+        });
+
+    });
+</script>

@@ -1,5 +1,12 @@
 ﻿@model IEnumerable<Process_Software.Models.Work>
-<h1>History Task Log</h1>
+@{
+    var Role = Context.Session.GetString("Default");
+}
+<h1>History Task Log (@Role)</h1>
+@using (Html.BeginForm("History", "Work", FormMethod.Get, new { id = "Filters", name = "Filters", enctype = "multipart/form-data" }))
+{
+    @Html.Editor(null, "Search")
+}
 @using (Html.BeginForm("Edit", "Work", FormMethod.Post, new { id = "manage", name = "manage", enctype = "multipart/form-data" }))
 {
     <table class="table table-bordered table-primary" style="max-width:1300px">
@@ -42,8 +49,25 @@
 }
 <div class="col-xl-12">
     <div class="d-flex justify-content-between align-content-center">
-        @Html.ActionLink("Create", "Manage", new { }, new { @class = "btn btn-secondary" })
-        <a asp-action="Index" class="btn btn-danger d-flex justify-content-end">Back</a>
+        @* @Html.ActionLink("Create", "Manage", new { }, new { @class = "btn btn-secondary" }) *@
+        <a asp-action="Manage"
+           asp-controller="Work"
+           asp-route-id="@GlobalVariable.UserID"
+           asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
+           asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
+           asp-route-Project="@Context.Session.GetString("Project")"
+           asp-route-Status="@Context.Session.GetString("Status")"
+           asp-route-IsChangePage="true"
+           class="btn btn-secondary">Create task</a>
+        <a asp-action="Index"
+           asp-route-id="@GlobalVariable.UserID"
+           asp-controller="Work"
+           asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
+           asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
+           asp-route-Project="@Context.Session.GetString("Project")"
+           asp-route-Status="@Context.Session.GetString("Status")"
+           asp-route-IsChangePage="true" 
+           class="btn btn-danger d-flex justify-content-end">Back</a>
     </div>
 </div>
 

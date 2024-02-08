@@ -57,22 +57,23 @@ namespace Process_Software.Models
 
         [NotMapped]
         public string TempSessionToken { get; set; }
-        public void Insert(Process_Software_Context dbContext)
+        public async Task InsertAsync(Process_Software_Context dbContext)
         {
-            this.Password = HashingHelpers.HashPassword(this.Password);
+            this.Password = await HashingHelpers.HashPasswordAsync(this.Password);
             this.CreateDate = DateTime.Now;
             this.UpdateDate = DateTime.Now;
             this.IsDelete = false;
             dbContext.User.Add(this);
         }
 
-        public void Update(Process_Software_Context dbContext)
+        public async Task Update(Process_Software_Context dbContext)
         {
-            this.Password = HashingHelpers.HashPassword(this.Password);
+            this.Password = await HashingHelpers.HashPasswordAsync(this.Password);
             this.UpdateDate = DateTime.Now;
             var existingEntity = dbContext.User.Find(this.ID);
             dbContext.Entry(existingEntity).CurrentValues.SetValues(this);
         }
+
         public void Delete(Process_Software_Context dbContext)
         {
             var data = dbContext.User.Find(this.ID);

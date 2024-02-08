@@ -10,17 +10,18 @@ namespace Process_Software.Controllers
     {
         public Process_Software_Context db = new Process_Software_Context();
 
-        public List<SelectListItem> _ProviderDropdownList { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> _StatusDropdownList { get; set; } = new List<SelectListItem>();
         public List<SelectListItem> _UserProviserDropdownList { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> _WorkProjectDropdownList { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> _FilterProvider { get; set; } = new List<SelectListItem>();
         public int? _WorkID;
-        protected User? GetSessionUser()
+        public User? GetSessionUser()
         {
             // ตรวจสอบว่ามีการล็อกอินหรือไม่
             if (GlobalVariable.GetUserEmail != null)
             {
                 // ดึงอีเมลผู้ใช้จากระบบเซสชัน
                 string? userSession = GlobalVariable.GetUserEmail().ToString();
-
                 // ค้นหาข้อมูลผู้ใช้จากอีเมลในฐานข้อมูล
                 User? user = db.User.Where(s => s.Email == userSession).FirstOrDefault();
                 return user;
@@ -30,13 +31,15 @@ namespace Process_Software.Controllers
                 return null;
             }
         }
-        protected void ViewbagData()
+        public void ViewbagData()
         {
             User? user = GetSessionUser();
             ViewBag.UserName = user.Name;
             ViewBag.UserValue = db.User.ToList();
-            ViewBag.StatusDropdownList = _ProviderDropdownList;
+            ViewBag.StatusDropdownList = _StatusDropdownList;
             ViewBag.UserProviserDropdownList = _UserProviserDropdownList;
+            ViewBag.WorkProjectDropdownList = _WorkProjectDropdownList;
+            ViewBag.FilterProvider = _FilterProvider;
         }
         // GetWork ดึงข้อมูลงานทั้งหมดที่ไม่ถูกลบทิ้งพร้อมข้อมูลที่เกี่ยวข้อง
         public List<Work> GetWork()

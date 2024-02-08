@@ -16,70 +16,124 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrapx/bootstrap-multiselect.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/wavefooter.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dropdrownmutilevel.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Process_Software.styles.css" asp-append-version="true" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Single+Day&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tifinagh&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://use.fontawesome.com/releases/v5.0.2/css/all.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow fixed-top">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Work" asp-action="Index">Process Software</a>
+                <div>
+                    <a>
+                        <span class="material-icons orange600">
+                            edit_document
+                        </span>
+                    </a>
+                </div>
+                <a class="navbar-brand" asp-area="" asp-controller="Work" asp-action="Index"
+                   asp-route-id="@GlobalVariable.UserID"
+                   asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
+                   asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
+                   asp-route-Project="@Context.Session.GetString("Project")"
+                   asp-route-Status="@Context.Session.GetString("Status")"
+                   asp-route-IsChangePage="true">Process Software</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li>
-                            <a class="nav-link" asp-controller="Work" asp-action="Index"><span>Assigning Tasks</span></a>
-                        </li>
-                    </ul>
-
+                    @if (userSession != null)
+                    {
+                        <ul class="navbar-nav flex-grow-1">
+                            <li>
+                                <a class="nav-link" asp-controller="Work" asp-action="Index"
+                                   asp-route-id="@GlobalVariable.UserID"
+                                   asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
+                                   asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
+                                   asp-route-Project="@Context.Session.GetString("Project")"
+                                   asp-route-Status="@Context.Session.GetString("Status")"
+                                   asp-route-IsChangePage="true">
+                                    <span>Assigning Tasks</span>
+                                </a>
+                            </li>
+                        </ul>
+                    }
                     <ul class="navbar-nav flex-grow-0">
                         <li>
-                            @* <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            @Html.DisplayName("Profile")
-                            </button> *@
-                            <div class="btn-group dropstart">
-                                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" alt="" width="30" height="30">
-                                </button>
-                                @* <button id="toggleModeBtn" class="btn btn-outline-secondary">
-                                    Toggle Mode
-                                </button> *@
-                                <ul class="dropdown-menu" aria-labelledby="profileDropdown" style="min-width:auto;">
-                                    @if (userSession != null)
-                                    {
-                                        <li class="mt-2" style="display: flex; align-items: center;">
 
-                                            <p style="margin-left: 10px; color: chocolate; white-space: nowrap; display: inline-block;" class="navbar-nav" disabled>Email: @userSession</p>
-                                            <a class="nav-link" asp-controller="Home" asp-action="Profile" asp-route-id="@GlobalVariable.UserID">
-                                                <span class="btn-md">
-                                                    <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" alt="" width="20" height="20">
-                                                </span>
+                            <div class="dropdown">
+                                @if (userSession != null)
+                                {
+                                    <button class="dropdown-btn" onclick="toggleDropdown()">
+                                        <div>Dashboard</div>
+                                        <span class="material-symbols-outlined expand-icon"> expand_more </span>
+                                    </button>
+                                    <div class="dropdown-content" id="myDropdown">
+
+                                        <a asp-controller="Work" asp-action="Home" asp-route-id="@GlobalVariable.UserID"
+                                           asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
+                                           asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
+                                           asp-route-Project="@Context.Session.GetString("Project")"
+                                           asp-route-Status="@Context.Session.GetString("Status")"
+                                           asp-route-IsChangePage="true">
+                                            <span class="material-symbols-outlined"> cottage </span>
+                                            Home
+                                        </a>
+
+                                        <div class="nested-dropdown">
+                                            <a href="#">
+                                                <span class="material-symbols-outlined">contact_support</span>
+                                                Profile
                                             </a>
-                                        </li>
 
-                                        <li>
-                                            <p style="margin-left:10px; color:darkgreen">Name: @userName</p>
-                                        </li>
-                                        <li>
-                                            <a class="nav-link" asp-controller="Home" asp-action="Logout"><span class="btn btn-outline-danger btn-md">Logout</span></a>
-                                        </li>
+                                            <div class="nested-dropdown-content">
+                                                <a>
+                                                    <span class="material-symbols-outlined">contact_mail</span>
+                                                    <div class="mt-2">@userSession</div>
+                                                </a>
+                                                <a>
+                                                    <span class="material-symbols-outlined">person</span>
+                                                    <div class="mt-2">@userName</div>
+                                                </a>
+                                                <a class="nav-link" asp-controller="Home" asp-action="Profile"
+                                                   asp-route-id="@GlobalVariable.UserID"
+                                                   asp-route-AssignBy="@Context.Session.GetString("AssignBy")"
+                                                   asp-route-FilltersProvidersID="@Context.Session.GetString("FilltersProvidersID")"
+                                                   asp-route-Project="@Context.Session.GetString("Project")"
+                                                   asp-route-Status="@Context.Session.GetString("Status")"
+                                                   asp-route-IsChangePage="true">
+                                                    <span class="material-symbols-outlined">
+                                                        admin_panel_settings
+                                                    </span>
+                                                    Edit your profile
+                                                </a>
+                                            </div>
 
-                                    }
-                                    else
-                                    {
-                                        <li>
-                                            <a class="nav-link" asp-controller="Home" asp-action="Login"><span class="btn btn-outline-warning btn-md">Login</span></a>
-                                        </li>
-                                    }
-                                </ul>
+                                        </div>
+                                        <a asp-controller="Home" asp-action="Logout">
+                                            <span class="material-symbols-outlined">logout</span>
+                                            Logout
+                                        </a>
+
+
+                                    </div>
+                                }
                             </div>
+                            @* else
+                            {
+                            <a asp-controller="Home" asp-action="Login">
+                            <span class="material-symbols-outlined">login</span>
+                            Login
+                            </a>} *@
+
                         </li>
                     </ul>
                 </div>
@@ -88,16 +142,29 @@
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-5" style="margin-top:80px;">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - Process Software - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="fixed">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+             viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7)" />
+                <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+                <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+                <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+            </g>
+        </svg>
+        <div class="text-muted d-flex justify-content-center fixed" style="color:black;">
+            &copy; 2024 - Process Software - <a href="/Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrapx/bootstrap-multiselect.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -105,69 +172,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-<style>
-    body.dark-mode {
-        background-color: #121212; /* สีพื้นหลังที่เข้ม */
-        /* color: #ffffff; /* สีของตัวหนังสือในโหมดสีสว่าง */ */
-    }
-
-        body.dark-mode .navbar {
-            background-color: #333; /* สีพื้นหลังของแถบนาวบาร์ที่เข้ม */
-            /* color: #ffffff; /* สีของตัวหนังสือในแถบนาวบาร์ */ */
-        }
-
-        body.dark-mode a,
-        body.dark-mode p,
-        body.dark-mode span {
-            /* color: #ffffff; /* สีของตัวหนังสือในองค์ประกอบอื่น ๆ */ */
-        }
-</style>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Check if the user has a preferred mode stored in local storage
-        var preferredMode = localStorage.getItem('preferredMode');
-
-        // If preferred mode is 'dark', apply dark mode
-        if (preferredMode === 'dark') {
-            enableDarkMode();
-        }
-
-        // Toggle mode when the button is clicked
-        document.getElementById('toggleModeBtn').addEventListener('click', function () {
-            toggleDarkMode();
-        });
-    });
-    function toggleDarkMode() {
-        var body = document.body;
-
-        // Check if dark mode is currently enabled
-        var darkModeEnabled = body.classList.contains('dark-mode');
-
-        // Toggle between dark and light mode
-        if (darkModeEnabled) {
-            enableLightMode();
-        } else {
-            enableDarkMode();
-        }
-    }
-
-    function enableDarkMode() {
-        var body = document.body;
-
-        // Enable dark mode
-        body.classList.add('dark-mode');
-
-        // Save preferred mode to local storage
-        localStorage.setItem('preferredMode', 'dark');
-    }
-
-    function enableLightMode() {
-        var body = document.body;
-
-        // Disable dark mode
-        body.classList.remove('dark-mode');
-
-        // Save preferred mode to local storage
-        localStorage.setItem('preferredMode', 'light');
-    }
-</script>
